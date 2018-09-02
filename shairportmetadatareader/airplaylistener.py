@@ -30,7 +30,7 @@ try:
     from kivy.event import EventDispatcher
     from kivy.properties import StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
         ListProperty, ObjectProperty
-except ImportError:`
+except ImportError:
     # fallback to eventdispatcher
     from eventdispatcher import EventDispatcher, StringProperty, OptionProperty, ListProperty, DictProperty, \
         LimitProperty as BoundedNumericProperty, Property as ObjectProperty
