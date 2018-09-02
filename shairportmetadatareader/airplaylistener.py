@@ -128,8 +128,6 @@ core_metadata_dict = {"mikd": ("itemkind", "int"),
                       "askd": ("songlastskipdate", "date"),
                       "assn": ("sortname", "str"),
                       "assu": ("sortalbum", "str"),
-                      #"caps": ("playerstate", "int"),         # 1 playing, 2 paused, 3 stopped ?
-                      #"cmsr": ("serverrevision", "int"),      # revision number
                       "aeNV": ("itunesnormvolume", "int"),    # com.apple.itunes.norm-volume
                       "aePC": ("itunesispodcast", "bool"),    # com.apple.itunes.is-podcast
                       "aeHV": ("ituneshasvideo", "bool"),     # com.apple.itunes.has-video
@@ -137,6 +135,11 @@ core_metadata_dict = {"mikd": ("itemkind", "int"),
                       "aeSN": ("itunesseriesname", "str"),    # com.apple.itunes.series-name
                       "aeEN": ("itunesepisodenumstr", "str")  # com.apple.itunes.norm-volume
                       }
+
+# known codes that we really don't care about
+ignored_core_meta_dict = {"caps": ("playerstate", "int"),         # 1 playing, 2 paused, 3 stopped ?
+                          "cmsr": ("serverrevision", "int"),      # revision number
+                          }
 
 
 class AirplayListener(EventDispatcher):
@@ -262,7 +265,7 @@ class AirplayListener(EventDispatcher):
             if item.code == "PICT": # artwork received
                 if item.data_base64: # check if picture data is found
                     self.artwork = write_data_to_image(item.data) # Path to artwork image
-                self.artwork = None
+                self.artwork = ""
             elif item.code == "mden": # metadata end
                 # only send updates if required
                 if not (self._tmp_track_info.items() <= self.track_info.items()):
@@ -331,6 +334,9 @@ class AirplayListener(EventDispatcher):
                     data = item.data_base64
                 # save metadata info
                 self._tmp_track_info[dmap_key] = data
+            elif item.code in ignored_core_meta_dict:
+                # just ignore these
+                pass
             else:
                 logger.warning("Unknown DMAP-core code: {0}, with data {1}.".format(item.code, item.data_base64))
 
