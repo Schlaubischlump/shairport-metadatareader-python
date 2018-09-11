@@ -1,3 +1,11 @@
+"""
+simple_kivy Example
+====================================================
+This example demonstrates a simple use of the AirplayListener and AirplayRemote.
+It shows a window with the current artwork, song title, artist and album.
+Additionally it displays five buttons to control the playback.
+"""
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import StringProperty, ObjectProperty

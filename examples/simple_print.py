@@ -1,4 +1,10 @@
-from __future__ import print_function
+"""
+simple_print Example
+====================================================
+This example demonstrates a simple use of the AirplayListener and AirplayRemote.
+The current track information will be printed on the commandline.
+The airplay client can be controlled by entering the numbers which correspond to a command.
+"""
 
 import logging
 from time import sleep
