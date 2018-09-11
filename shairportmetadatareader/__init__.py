@@ -36,4 +36,4 @@ if not which("shairport-sync"):
     import logging
     logger = logging.getLogger("ShairportLogger")
     logger.warning("Can not find executable shairport-sync in your PATH. Make sure that shairport-sync is installed "
-                   "and running with support for writing the metadata to the pipe.")
+                   "and configured to support writing the metadata to the pipe or the UDP server.")

@@ -18,7 +18,7 @@ In addition, it includes a `remote` sub-package to remotely control the Airplay 
 ...
 
 ## Example (Read Metadata)
-```
+```Python
 from time import sleep
 from shairportmetadatareader import AirplayListener
 
