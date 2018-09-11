@@ -84,7 +84,7 @@ class AirplayListener(EventDispatcher):
     '''Information about the currently playing track.'''
 
     playback_progress = ListProperty([])
-    '''(Start position, current playback position, end position) of the track'''
+    '''(current playback position, duration) of the track'''
 
     artwork = StringProperty("")
     '''Path to artwork file.'''
@@ -106,14 +106,14 @@ class AirplayListener(EventDispatcher):
 
     def __init__(self, sample_rate=44100):
         """
-        :param sample_rate: sample_rate used by shairport-sync. Needed to calculate playback_progress.
+        :param sample_rate: sample_rate used by shairport-sync. Needed to calculate the playback progress.
         """
         super(AirplayListener, self).__init__()
         self._sample_rate = sample_rate  # sample rate used by shairport-sync
         self._is_listening = False  # is listening for metadata updates
         self._tmp_track_info = {}   # temporary storage for track metadata
 
-        self.playback_progress = []
+        self.playback_progress = []  # playback progress send by ssnc
 
         self.track_info = {}  # track info send by ssnc
         self._artwork = ""
@@ -175,7 +175,7 @@ class AirplayListener(EventDispatcher):
         # try to stop shairport-sync
         stop_shairport_daemon()
 
-    def parse_socket(self, socket_addr, buffer_size=65000):
+    def parse_socket(self, socket_addr=DEFAULT_SOCKET, buffer_size=65000):
         """
         Parse the udp socket for metadata information.
         :param socket_addr: tuple consisting of (ip_str, port_number)
@@ -200,7 +200,7 @@ class AirplayListener(EventDispatcher):
                 i += 1
                 chunk_index = hex_bytes_to_int(msg_data[8:12])   # position of the chunk inside the target bytes array
                 chunk_count = hex_bytes_to_int(msg_data[12:16])  # amount of chunks which need to be received
-                # create empty dummy array for all chunks
+                # create an empty dummy array for all chunks
                 if not chunks:
                     chunks = [b""]*chunk_count
                 # insert data chunk into the array at the correct position
@@ -224,7 +224,7 @@ class AirplayListener(EventDispatcher):
                 item = Item(item_type, code, text=msg_data[8:] or None, length=len(msg_data)-8, encoding="bytes")
                 self._process_item(item)
 
-    def parse_pipe(self, pipe_file):
+    def parse_pipe(self, pipe_file=DEFAULT_PIPE_FILE):
         """
         Parse the metadata pipe file and process the information. This method is blocking.
         :param pipe_file: path to the pipe file
@@ -314,7 +314,8 @@ class AirplayListener(EventDispatcher):
                 self.connected = False
             elif item.code == "prgr":
                 # this calculation seems inaccurate => limit the values to positive numbers
-                self.playback_progress = [max(i/self._sample_rate, 0) for i in item.data()]
+                start, cur, end = item.data()
+                self.playback_progress = [max(0, (cur-start)/self._sample_rate), max(0, (end-start)/self._sample_rate)]
                 #start, cur, end = item.data() # (start, current track progress, end) as RTP timestamp
                 #self.playback_progress = min(max(0, (cur-start)/(end-start)), 1.0)
             elif item.code == "pvol":

@@ -323,7 +323,7 @@ ssnc_code_dict = {
     "pfls": ("streampause", None),
     "prsm": ("streamstartresume", None),
     "pend": ("streamstop", None),
-    # current track progress as RTP timestamp (start, cur, end)
+    # current playback progress as RTP timestamp (start, cur, end)
     # you can calculate (cur-start)/SAMPLE_RATE to get the actual time
     "prgr": ("playbackprogress", lambda item: [float(i) for i in item.data_str.split("/")]),
     # "airplay_volume,volume,lowest_volume,highest_volume"
