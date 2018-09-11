@@ -93,7 +93,7 @@ class MusicPlayer(App):
     def build(self):
         self.root = RootLayout()
 
-        # listen for airplay events
+        # start shairport-sync and listen for airplay events
         self.listener = AirplayListener()
         self.listener.bind(track_info=self.root.on_track_info,
                            artwork=self.root.on_artwork,
@@ -101,6 +101,10 @@ class MusicPlayer(App):
         self.listener.start_listening(socket_addr=DEFAULT_SOCKET)
 
         return self.root
+
+    def on_stop(self):
+        # stop listening for events an close shairport-sync
+        self.listener.stop_listening()
 
 
 if __name__ == '__main__':
