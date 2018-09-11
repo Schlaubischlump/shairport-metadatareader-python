@@ -111,6 +111,9 @@ class AirplayCommand(Enum):
     VOLUME_DOWN = "volumedown"
     VOLUME_UP = "volumeup"
 
+    def __str__(self):
+        return self.value
+
 
 class AirplayRemote(object):
     """
@@ -132,10 +135,11 @@ class AirplayRemote(object):
         self.hostname = hostname
 
     @classmethod
-    def get_remote(cls, dacp_id, token):
+    def get_remote(cls, dacp_id, token, timeout):
         """
         :param dacp_id: dacp_id of the client
         :param token: token of client
+        :param timeout: time after which the search for the airplay remote will be terminated
         :return: instance of AirplayRemote
         """
         zeroconf = Zeroconf()
@@ -144,7 +148,11 @@ class AirplayRemote(object):
             listener = AirplayServiceListener(dacp_id, zeroconf)
             browser = ServiceBrowser(zeroconf, AIRPLAY_ZEROCONF_SERVICE, listener)
             wait_thread = listener.start_listening()
-            wait_thread.join()
+            wait_thread.join(timeout=timeout)
+            # if the thread is still alive a timeout occured
+            if wait_thread.is_alive():
+                listener.stop_listening()
+                return None
         except Exception as e:
             print(e)
         finally:
@@ -163,7 +171,7 @@ class AirplayRemote(object):
         :param command: command as string or AirplayCommand to send
         :return request object
         """
-        command = command.value if isinstance(command, AirplayCommand) else command
+        command = str(command)
         headers = {"Active-Remote": self.token}
         url = self.base_url + to_unicode(command)
         return requests.get(url, headers=headers, verify=False)

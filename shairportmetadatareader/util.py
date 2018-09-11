@@ -9,11 +9,13 @@ if IS_PY2:
     to_unicode = lambda s: s.decode("utf-8") if isinstance(s, str) else s
     to_binary = lambda s: s.encode("utf-8") if isinstance(s, unicode) else s
     to_hex = lambda x: hex(ord(x))
+    hex_bytes_to_int = lambda b: int(''.join([str(ord(x)) for x in b]))
 else:
     from base64 import decodebytes, encodebytes
     to_unicode = lambda s: s if isinstance(s, str) else s.decode("utf-8")
     to_binary = lambda s: s.encode("utf-8") if isinstance(s, str) else s
     to_hex = lambda x: hex(x)
+    hex_bytes_to_int = lambda b: int(b.hex())
 
 
 def ascii_integers_to_string(string, base=16, digits_per_char=2):
