@@ -51,11 +51,11 @@ DEFAULT_PIPE_FILE = "/tmp/shairport-sync-metadata"
 DEFAULT_SOCKET = ("127.0.0.1", 5555)
 
 # core codes which should be included in the track information field
-CORE_CODE_WHITELIST = ['mikd', 'minm', 'mper', 'miid', 'asal', 'asar', 'ascm', 'asco', 'asbr', 'ascp', 'asda', 'aspl',
+CORE_CODE_WHITELIST = {'mikd', 'minm', 'mper', 'miid', 'asal', 'asar', 'ascm', 'asco', 'asbr', 'ascp', 'asda', 'aspl',
                        'asdm', 'asdc', 'asdn', 'aseq', 'asgn', 'asdt', 'asrv', 'assr', 'assz', 'asst', 'assp', 'astm',
                        'astc', 'astn', 'asur', 'asyr', 'asfm', 'asdb', 'asdk', 'asbt', 'agrp', 'ascd', 'ascs', 'asct',
                        'ascn', 'ascr', 'asri', 'asai', 'askd', 'assn', 'assu', 'aeNV', 'aePC', 'aeHV', 'aeMK', 'aeSN',
-                       'aeEN']
+                       'aeEN'}
 
 
 class AirplayListener(EventDispatcher):
