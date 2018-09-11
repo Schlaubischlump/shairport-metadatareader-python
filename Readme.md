@@ -36,7 +36,7 @@ listener.start_listening() # read the data asynchronously from the pipe
 sleep(60) # receive data for 60 seconds
 listener.stop_listening()
 ```
-For a more advanced example take a look at the main.py.
+For more advanced examples take a look at the examples folder.
 
 **Special thanks goes to**   
 - luckydonald for his [shairport-decoder](https://github.com/luckydonald/shairport-decoder)   
