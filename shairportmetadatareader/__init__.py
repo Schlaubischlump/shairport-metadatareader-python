@@ -5,8 +5,8 @@ from .remote import AirplayRemote, AirplayCommand
 
 import os
 
-__all__ = ["AirplayListener", "AirplayRemote", "AirplayCommand", "DEFAULT_PIPE_FILE", "start_shairport_daemon",
-           "stop_shairport_daemon"]
+__all__ = ["AirplayListener", "AirplayRemote", "AirplayCommand", "DEFAULT_PIPE_FILE", "DEFAULT_SOCKET",
+           "start_shairport_daemon", "stop_shairport_daemon"]
 
 
 def which(program):
