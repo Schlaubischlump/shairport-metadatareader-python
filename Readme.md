@@ -10,6 +10,8 @@ In addition, it includes a `remote` sub-package to remotely control the Airplay 
 - [kivy](https://kivy.org/) `pip install kivy` **or** [eventdispatcher](https://github.com/lobocv/eventdispatcher) 
 `pip install eventdispatcher`    
 
+## Installation
+`pip install git+https://github.com/Schlaubischlump/shairport-metadatareader-python`
 
 ## Bugs:
 - I don't know. Let me know!   

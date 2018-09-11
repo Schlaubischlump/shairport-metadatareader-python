@@ -18,7 +18,7 @@ except:
 
 setup(
     name='shairportmetadatareader',
-    version='0.1.0',
+    version='0.1.1',
     author='SchlaubiSchlump',
     packages=['shairportmetadatareader', 'shairportmetadatareader.remote'],
     license='GPLv3+',

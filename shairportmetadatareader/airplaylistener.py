@@ -309,7 +309,8 @@ class AirplayListener(EventDispatcher):
                 self.artwork = self._artwork
             elif item.code == "mdst":
                 # reset track information when new metadata starts
-                self.track_info = {}
+                # self.track_info = {}
+                pass
             elif item.code == "mden":
                 # only send updates if required
                 #if not (self._tmp_track_info.items() <= self.track_info.items()):

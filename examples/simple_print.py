@@ -1,4 +1,5 @@
-import sys
+from __future__ import print_function
+
 import logging
 from time import sleep
 from shairportmetadatareader.util import IS_PY2
@@ -8,7 +9,8 @@ from shairportmetadatareader import AirplayListener, AirplayCommand, DEFAULT_SOC
 logging.basicConfig(level=logging.DEBUG)
 
 # python2 support
-input = raw_input if IS_PY2 else input
+if IS_PY2:
+    input = raw_input
 
 # list of all possible commands
 allowed_cmds = [cmd.value for cmd in AirplayCommand]
