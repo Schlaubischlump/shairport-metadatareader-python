@@ -1,11 +1,7 @@
 import sys
-import logging
 from time import sleep
 
 from shairportmetadatareader import AirplayListener, AirplayCommand, DEFAULT_SOCKET
-
-# disable logging for input
-logging.basicConfig(level=logging.DEBUG)
 
 # python2 support
 input = raw_input if sys.version_info.major <= 2 else input
@@ -41,6 +37,7 @@ print("Available commands:")
 for i, cmd in enumerate(allowed_cmds, 1):
     print("{0}.\t{1}".format(i, cmd))
 
+# read and process the user input
 while True:
     cmd = input("Enter command number: ").strip()
 
@@ -55,7 +52,7 @@ while True:
         if not (1 <= cmd <= len(allowed_cmds)):
             print("Illegal command: {0}".format(cmd))
         else:
-            # you should catch exception for this function, in case the remote connection is lost
+            # you should catch exceptions thrown by this function, in case the remote connection is lost
             remote.send_command(allowed_cmds[cmd-1])
     except Exception as e:
         print(e)
