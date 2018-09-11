@@ -13,7 +13,7 @@ Builder.load_string("""
     artist: "artist"
     title: "title"
     album: "album"
-    artwork: "artwork"#"http://tracks.arte.tv/sites/default/files/styles/jscrop_1007x566/public/rickastley_2.jpg?itok=0CxpqgPL"
+    artwork: "artwork" # for some reason this string must no be empty, otherwise changing the artwork crashes the app
 
     orientation: 'vertical'
 
@@ -81,6 +81,7 @@ class RootLayout(BoxLayout):
 
     def on_has_remote(self, listener, has_remote):
         if has_remote:
+            # this might block the gui for 5 seconds
             self.remote = listener.get_remote(timeout=5)
         else:
             self.remote = None
