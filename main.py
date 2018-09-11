@@ -1,10 +1,14 @@
 import sys
+import logging
 from time import sleep
-
+from shairportmetadatareader.util import IS_PY2
 from shairportmetadatareader import AirplayListener, AirplayCommand, DEFAULT_SOCKET
 
+# show all warnings
+logging.basicConfig(level=logging.DEBUG)
+
 # python2 support
-input = raw_input if sys.version_info.major <= 2 else input
+input = raw_input if IS_PY2 else input
 
 # list of all possible commands
 allowed_cmds = [cmd.value for cmd in AirplayCommand]
@@ -19,9 +23,10 @@ def on_track_info(listener, info):
     print(info)
 
 
+# listen for track information changes using shairport-syncs udp port
 listener = AirplayListener()
 listener.bind(track_info=on_track_info)
-listener.start_listening(socket_addr=DEFAULT_SOCKET)  # this method is not blocking
+listener.start_listening(socket_addr=DEFAULT_SOCKET)
 
 # wait till all data to create an airplay remote is available
 while not listener.has_remote_data:
@@ -55,5 +60,4 @@ while True:
             # you should catch exceptions thrown by this function, in case the remote connection is lost
             remote.send_command(allowed_cmds[cmd-1])
     except Exception as e:
-        print(e)
         print("Illegal command: {0}".format(cmd))

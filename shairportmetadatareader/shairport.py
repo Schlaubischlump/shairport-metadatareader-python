@@ -1,6 +1,7 @@
 import atexit
 import logging
 import subprocess
+
 #logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("ShairportLogger")
 

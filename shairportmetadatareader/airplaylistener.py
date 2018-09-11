@@ -1,4 +1,4 @@
-from __future__ import print_function, division
+from __future__ import division
 
 """
 # See: https://github.com/mikebrady/shairport-sync-metadata-reader
@@ -17,12 +17,6 @@ is not tagged in the same way as other metadata, it seems, so is sent as an ssnc
 PICT. Progress information, similarly, is not tagged like other source-originated metadata, so it is sent as an ssnc 
 type with the code prgr.
 """
-from .item import Item
-from .util import write_data_to_image, to_unicode, hex_bytes_to_int
-from .remote import AirplayRemote
-from .codetable import CORE, SSNC, core_code_dict, ssnc_code_dict
-from .shairport import stop_shairport_daemon, start_shairport_daemon
-
 import os
 import stat
 import socket
@@ -41,7 +35,13 @@ except ImportError:
         LimitProperty as BoundedNumericProperty, Property as ObjectProperty
     BooleanProperty = lambda p: OptionProperty(False, options=[True, False])
 
-logging.basicConfig(level=logging.DEBUG)
+from .item import Item
+from .remote import AirplayRemote
+from .codetable import CORE, SSNC, core_code_dict, ssnc_code_dict
+from .util import write_data_to_image, to_unicode, hex_bytes_to_int
+from .shairport import stop_shairport_daemon, start_shairport_daemon
+
+
 logger = logging.getLogger("AirplayListenerLogger")
 
 
@@ -59,6 +59,7 @@ CORE_CODE_WHITELIST = ['mikd', 'minm', 'mper', 'miid', 'asal', 'asar', 'ascm', '
 
 
 class AirplayListener(EventDispatcher):
+
     connected = BooleanProperty(False)
     '''True if a device is connected, otherwise false.'''
 
@@ -104,6 +105,8 @@ class AirplayListener(EventDispatcher):
     mute = BooleanProperty(False)
     '''Is the ariplay device currently muted.'''
 
+    # ------------------------------------------ constructor/destructor ------------------------------------------------
+
     def __init__(self, sample_rate=44100):
         """
         :param sample_rate: sample_rate used by shairport-sync. Needed to calculate the playback progress.
@@ -123,6 +126,8 @@ class AirplayListener(EventDispatcher):
         # try to stop shairport if the instance of this class is destroyed
         stop_shairport_daemon()
 
+    # ---------------------------------------------- airplay remote ----------------------------------------------------
+
     def get_remote(self, timeout=5):
         """
         Get an airplay remote to control the client.
@@ -135,12 +140,15 @@ class AirplayListener(EventDispatcher):
         # this might take some time
         return AirplayRemote.get_remote(self.dacp_id, self.active_remote, timeout=timeout)
 
-    #------------------------------------------------- listening logic -------------------------------------------------
+    # ------------------------------------------------ listening logic -------------------------------------------------
 
     def start_listening(self, pipe_file=None, socket_addr=None):
         """
-        Start shairport and continuously read the metadata pipe in a background thread.
-        :param pipe_file: path to shairports pipe file
+        Start shairport-sync and continuously parse the metadata pipe or the UDP server in a background thread.
+        If pipe_file and socket_addr are both None, this method will fall back to parsing the DEFAULT_PIPE_FILE.
+        You should only specify the pipe_file or the socket_addr at a time. If you set both arguments, the pipe_file
+        will be used and the socket_addr is ignored.
+        :param pipe_file: path to shairport-sync pipe file
         :param socket_addr: tuple consisting of (socket_ip, socket_port)
         """
         if pipe_file and socket_addr:
@@ -169,6 +177,10 @@ class AirplayListener(EventDispatcher):
         t.start()
 
     def stop_listening(self):
+        """
+        Stop parsing the metadata pipe or the UDP server and stop the shairport-sync daemon if it was started inside the
+        start_listening method.
+        """
         # stop metadata reading
         self._is_listening = False
 
@@ -177,7 +189,7 @@ class AirplayListener(EventDispatcher):
 
     def parse_socket(self, socket_addr=DEFAULT_SOCKET, buffer_size=65000):
         """
-        Parse the udp socket for metadata information.
+        Parse the udp socket for metadata information. This method is blocking.
         :param socket_addr: tuple consisting of (ip_str, port_number)
         :param buffer_size: default buffer size to receive (65000 is the shairport-sync default)
         """
@@ -261,7 +273,7 @@ class AirplayListener(EventDispatcher):
                     else:
                         tmp += strip_line
 
-    #------------------------------------------------- data processing -------------------------------------------------
+    # ------------------------------------------------ data processing -------------------------------------------------
 
     def _process_item(self, item):
         """

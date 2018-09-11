@@ -1,3 +1,6 @@
+"""
+Common util functions used by all classes.
+"""
 import sys
 import tempfile
 from collections import defaultdict
@@ -10,12 +13,14 @@ if IS_PY2:
     to_binary = lambda s: s.encode("utf-8") if isinstance(s, unicode) else s
     to_hex = lambda x: hex(ord(x))
     hex_bytes_to_int = lambda b: int(''.join([str(ord(x)) for x in b]))
+    binary_ip_to_string = lambda ip: ".".join([str(ord(x)) for x in ip])
 else:
     from base64 import decodebytes, encodebytes
     to_unicode = lambda s: s if isinstance(s, str) else s.decode("utf-8")
     to_binary = lambda s: s.encode("utf-8") if isinstance(s, str) else s
     to_hex = lambda x: hex(x)
     hex_bytes_to_int = lambda b: int(b.hex())
+    binary_ip_to_string = lambda ip: ".".join([str(x) for x in ip])
 
 
 def ascii_integers_to_string(string, base=16, digits_per_char=2):

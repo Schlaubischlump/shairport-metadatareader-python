@@ -311,7 +311,7 @@ core_code_dict = {
 }
 
 
-# shairport sync codes
+# shairport-sync codes
 ssnc_code_dict = {
     "pcst": ("picturestart", "int"),  # with rtptime
     "pcen": ("pictureend", "int"),    # with rtptime

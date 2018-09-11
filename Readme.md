@@ -6,7 +6,7 @@ shairport-sync pipe or the specified shairport-sync udp server.
 In addition, it includes a `remote` sub-package to remotely control the Airplay client. 
 
 **Requirements**    
-- [zeroconf](https://pypi.org/project/zeroconf/) `pip install zeroconf` (use Version 0.19.1 or lower for python 2)   
+- [zeroconf](https://pypi.org/project/zeroconf/) `pip install zeroconf` (use version 0.19.1 or lower for python 2)   
 - [kivy](https://kivy.org/) `pip install kivy` **or** [eventdispatcher](https://github.com/lobocv/eventdispatcher) 
 `pip install eventdispatcher`    
 
@@ -14,9 +14,6 @@ In addition, it includes a `remote` sub-package to remotely control the Airplay 
 ## Bugs:
 - I don't know. Let me know!   
 ...
-
-## Todo:
-- Does the remote control work if the airplay server is password protected?
 
 ## Example (Read Metadata)
 ```

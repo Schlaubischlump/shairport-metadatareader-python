@@ -10,14 +10,14 @@ logger = logging.getLogger("AirplayListenerLogger")
 
 class Item(object):
     """
-    Class to represent a single pipe item.
+    Class to represent a single item from the pipe or the udp server.
     """
     def __init__(self, item_type, code, length=0, text=None, encoding=None):
         """
         :param item_type: ssnc or core
-        :param code: ssnc or core codes. See AirplayListener for details.
-        :param text: base64 or bytes encoded data text
-        :param encoding: data encoding
+        :param code: ssnc or core codes. See codetable.py for details.
+        :param text: encoded data
+        :param encoding: base64 or bytes encoding of the text
         :param length: length of the data
         """
         super(Item, self).__init__()
@@ -44,8 +44,10 @@ class Item(object):
         else:
             if self.length != 0:
                 raise ValueError("Malformed data.")
-            self._data = None #to_binary("")
+            self._data = None
             self._data_base64 = None
+
+    # --------------------------------------------- xml parsing --------------------------------------------------------
 
     @classmethod
     def item_from_xml_string(cls, item_str):
@@ -76,6 +78,8 @@ class Item(object):
         except ParseError:
             logger.warning("Can not parse item: {0}".format(item_str))
             return None
+
+    # --------------------------------------------- convert data -------------------------------------------------------
 
     def data(self, dtype=None):
         """

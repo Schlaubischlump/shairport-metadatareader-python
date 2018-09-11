@@ -5,7 +5,7 @@ from distutils.core import setup
 IS_PY2 = sys.version_info.major <= 2
 
 requirements = ["requests"]
-# Version 0.20.0 dropped support for python 2
+# zeroconf version 0.20.0 dropped support for python 2
 requirements += ["zeroconf==0.19.1", "enum34"] if IS_PY2 else ["zeroconf"]
 
 # if kivy is installed we don't need to download eventdispatcher
