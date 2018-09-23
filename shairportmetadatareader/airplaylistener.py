@@ -93,7 +93,7 @@ class AirplayListener(EventDispatcher):
     user_agent = StringProperty("")
     '''Airplay user agent. e.g. iTunes/12.2 (Macintosh; OS X 10.9.5)'''
 
-    item = ObjectProperty("")
+    item = ObjectProperty(None)
     '''Last received item from the pipe. Use this if you need to react to a specific code.'''
 
     airplay_volume = BoundedNumericProperty(0, min=0.0, max=1.0)
