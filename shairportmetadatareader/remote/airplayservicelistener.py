@@ -11,7 +11,7 @@ class AirplayServiceListener(object):
     """
     Listener for incoming airplay connections.
     """
-    def __init__(self, dacp_id, conf):
+    def __init__(self, dacp_id):
         """
         :param dacp_id: expected name of the connected airplay service
         :param conf: zeroconf instance

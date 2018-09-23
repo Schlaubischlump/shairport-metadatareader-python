@@ -32,7 +32,7 @@ try:
 except ImportError:
     # fallback to eventdispatcher
     from eventdispatcher import EventDispatcher, StringProperty, OptionProperty, ListProperty, DictProperty, \
-        LimitProperty as BoundedNumericProperty, Property as ObjectProperty
+            LimitProperty as BoundedNumericProperty, Property as ObjectProperty
     BooleanProperty = lambda p: OptionProperty(False, options=[True, False])
 
 from .item import Item
@@ -75,10 +75,10 @@ class AirplayListener(EventDispatcher):
     active_remote = StringProperty("")
     '''Active remote token used to remote control the airplay device.'''
 
-    client_name = StringProperty([])
+    client_name = StringProperty("")
     '''Name of the airplay client e.g John's iPhone.'''
 
-    playback_state = StringProperty("stop", options=["play", "pause", "stop"])
+    playback_state = OptionProperty("stop", options=["play", "pause", "stop"])
     '''Playback state.'''
 
     track_info = DictProperty({})

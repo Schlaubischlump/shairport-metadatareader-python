@@ -67,7 +67,7 @@ class AirplayRemote(object):
         zeroconf = Zeroconf()
         listener = None
         try:
-            listener = AirplayServiceListener(dacp_id, zeroconf)
+            listener = AirplayServiceListener(dacp_id)
             browser = ServiceBrowser(zeroconf, AIRPLAY_ZEROCONF_SERVICE, listener)
             wait_thread = listener.start_listening()
             wait_thread.join(timeout=timeout)
