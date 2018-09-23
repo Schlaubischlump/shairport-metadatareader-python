@@ -6,6 +6,8 @@ shairport-sync pipe or the specified shairport-sync udp server.
 In addition, it includes a `remote` sub-package to remotely control the Airplay client. 
 
 **Requirements**    
+- [enum34](https://pypi.org/project/enum34/) `pip install enum34` (Python 2 only)   
+- [requests](http://www.python-requests.org/en/master/) `pip install requests`   
 - [zeroconf](https://pypi.org/project/zeroconf/) `pip install zeroconf` (use version 0.19.1 or lower for python 2)   
 - [kivy](https://kivy.org/) `pip install kivy` **or** [eventdispatcher](https://github.com/lobocv/eventdispatcher) 
 `pip install eventdispatcher`    
