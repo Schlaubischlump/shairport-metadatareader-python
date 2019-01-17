@@ -26,9 +26,13 @@ def to_binary(s):
 
 
 def to_hex(x):
-    if IS_PY2:
-        return hex(ord(x))
-    return hex(x)
+    """
+    Convert a str or an int to its hexadecimal representation.
+    :param x: str or int
+    """
+    if isinstance(x, int):
+        return hex(x)
+    return hex(ord(x))
 
 
 def hex_bytes_to_int(b):

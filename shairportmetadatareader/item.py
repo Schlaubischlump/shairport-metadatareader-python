@@ -42,6 +42,7 @@ class Item(object):
                 self._data = text
                 self._data_base64 = encodebytes(to_binary(self._data))
         else:
+            print(type, code, length)
             if self.length != 0:
                 raise ValueError("Malformed data.")
             self._data = None
@@ -128,7 +129,6 @@ class Item(object):
     @property
     def data_str(self):
         if self._data:
-            print("Bliblablu: ", to_unicode(self._data), self._data)
             return to_unicode(self._data)
 
     @property
