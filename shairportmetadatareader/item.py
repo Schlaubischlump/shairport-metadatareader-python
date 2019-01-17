@@ -42,7 +42,6 @@ class Item(object):
                 self._data = text
                 self._data_base64 = encodebytes(to_binary(self._data))
         else:
-            print(type, code, length)
             if self.length != 0:
                 raise ValueError("Malformed data.")
             self._data = None

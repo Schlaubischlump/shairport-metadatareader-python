@@ -73,8 +73,8 @@ def xml_to_dict(ele):
     """
     Convert an xml object to a dictionary structure.
     See: http://stackoverflow.com/a/10077069
-    :param t:
-    :return:
+    :param ele: xml string
+    :return: dictionary from xml
     """
     d = {ele.tag: {} if ele.attrib else None}
     children = list(ele)

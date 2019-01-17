@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase, main
+from xml.etree.ElementTree import fromstring as xml_from_string
 
 from shairportmetadatareader.util import binary_ip_to_string, to_unicode, hex_bytes_to_int, to_hex, to_binary, \
-    ascii_integers_to_string
+    ascii_integers_to_string, xml_to_dict
 
 class TestUtil(TestCase):
 
@@ -36,6 +37,13 @@ class TestUtil(TestCase):
         tests = [("73736e63", 16, 2, "ssnc")]
         for s, base, digits_per_char, expected in tests:
             self.assertEqual(ascii_integers_to_string(s, base, digits_per_char), expected)
+
+    def test_xml_to_dict(self):
+        test_str = '<item><type>73736e63</type><code>70637374</code><length>10</length><data encoding="base64"' \
+                   '>MjkzNDE5NDIzMg==</data></item>'
+        expected_dict = {"item": {"type": "73736e63", "length": "10", "code": "70637374", "data":
+            {"#text": "MjkzNDE5NDIzMg==", "@encoding": "base64"}}}
+        self.assertEqual(xml_to_dict(xml_from_string(test_str)), expected_dict)
 
 if __name__ == "__main__":
     main()
