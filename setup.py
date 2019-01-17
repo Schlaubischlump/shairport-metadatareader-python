@@ -1,5 +1,5 @@
 import sys
-from distutils.core import setup
+from setuptools import setup
 
 # dynamically build requirements because of kivy/eventdispatcher dependency
 IS_PY2 = sys.version_info.major <= 2
@@ -22,6 +22,8 @@ setup(
     author='SchlaubiSchlump',
     packages=['shairportmetadatareader', 'shairportmetadatareader.remote'],
     license='GPLv3+',
+    setup_requires=["pytest-runner"],
+    tests_require=["pytest"],
     long_description=open('Readme.md').read(),
     install_requires=requirements,
     classifiers = [

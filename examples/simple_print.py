@@ -43,6 +43,8 @@ while not listener.has_remote_data:
 # get an airplay remote instance ... this might take some time
 print("Waiting for active connection...")
 remote = listener.get_remote()
+if not remote:
+    exit(-1)
 print("Connected to device: {0}".format(remote.hostname))
 
 # show the user a list with available commands

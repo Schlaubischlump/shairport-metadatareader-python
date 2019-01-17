@@ -42,8 +42,6 @@ def binary_ip_to_string(ip):
     Get the ip-address as readable string from its binary representation.
     :param ip: ip-address in binary format
     :return: ip-address as string
-
-    >>> binary_ip_to_string
     """
     if IS_PY2:
         return ".".join([str(ord(x)) for x in ip])
@@ -105,8 +103,3 @@ def write_data_to_image(data, extension=".png"):
     with temp_file as file:
         file.write(data)
     return temp_file.name
-
-
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod()

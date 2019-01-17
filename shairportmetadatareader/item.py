@@ -128,6 +128,7 @@ class Item(object):
     @property
     def data_str(self):
         if self._data:
+            print("Bliblablu: ", to_unicode(self._data), self._data)
             return to_unicode(self._data)
 
     @property

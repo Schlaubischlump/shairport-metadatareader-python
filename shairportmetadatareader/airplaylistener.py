@@ -203,7 +203,6 @@ class AirplayListener(EventDispatcher):
 
         while self._is_listening:
             msg_data, addr = sock.recvfrom(buffer_size)
-
             item_type = to_unicode(msg_data[:4])
             code = to_unicode(msg_data[4:8])
 
