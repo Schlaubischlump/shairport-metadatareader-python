@@ -25,7 +25,7 @@ from time import sleep
 from threading import Thread
 
 try:
-    # prefer kivy if its available
+    # prefer kivy if it is available
     from kivy.event import EventDispatcher
     from kivy.properties import StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
         ListProperty, ObjectProperty

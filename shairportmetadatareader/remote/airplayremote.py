@@ -44,7 +44,10 @@ class AirplayRemote(object):
     def __init__(self, dacp_id, active_remote, host, port, hostname=None):
         """
         :param dacp_id: dacp_id of the connected client
-        :param token:
+        :param active_remote: active remote token
+        :param host: ip address to send the commands to
+        :param port: port to send the commands to
+        :param hostname: optional hostname
         """
         super(AirplayRemote, self).__init__()
 
@@ -53,13 +56,12 @@ class AirplayRemote(object):
         self.host = host
         self.port = port
         self.base_url = "{0}:{1}/ctrl-int/1/".format(host, port)
-        # optional hostname
         self.hostname = hostname
 
     @classmethod
     def get_remote(cls, dacp_id, token, timeout):
         """
-        :param dacp_id: dacp_id of the client
+        :param dacp_id: clients dacp_id
         :param token: token of client
         :param timeout: time after which the search for the airplay remote will be terminated
         :return: instance of AirplayRemote
@@ -71,7 +73,7 @@ class AirplayRemote(object):
             browser = ServiceBrowser(zeroconf, AIRPLAY_ZEROCONF_SERVICE, listener)
             wait_thread = listener.start_listening()
             wait_thread.join(timeout=timeout)
-            # if the thread is still alive a timeout occured
+            # if the thread is still alive a timeout occurred
             if wait_thread.is_alive():
                 listener.stop_listening()
                 return None
@@ -90,7 +92,7 @@ class AirplayRemote(object):
     def send_command(self, command):
         """
         Send a get request to the airplay client.
-        :param command: command as string or AirplayCommand to send
+        :param command: command to send as string or AirplayCommand
         :return request object
         """
         command = str(command)

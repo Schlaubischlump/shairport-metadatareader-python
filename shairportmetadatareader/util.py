@@ -9,18 +9,45 @@ IS_PY2 = sys.version_info.major <= 2
 
 if IS_PY2:
     from base64 import decodestring as decodebytes, encodestring as encodebytes
-    to_unicode = lambda s: s.decode("utf-8") if isinstance(s, str) else s
-    to_binary = lambda s: s.encode("utf-8") if isinstance(s, unicode) else s
-    to_hex = lambda x: hex(ord(x))
-    hex_bytes_to_int = lambda b: int(''.join([str(ord(x)) for x in b]), 16)
-    binary_ip_to_string = lambda ip: ".".join([str(ord(x)) for x in ip])
 else:
     from base64 import decodebytes, encodebytes
-    to_unicode = lambda s: s if isinstance(s, str) else s.decode("utf-8")
-    to_binary = lambda s: s.encode("utf-8") if isinstance(s, str) else s
-    to_hex = lambda x: hex(x)
-    hex_bytes_to_int = lambda b: int(b.hex(), 16)
-    binary_ip_to_string = lambda ip: ".".join([str(x) for x in ip])
+
+
+def to_unicode(s):
+    if IS_PY2:
+        return s.decode("utf-8") if isinstance(s, str) else s
+    return s if isinstance(s, str) else s.decode("utf-8")
+
+
+def to_binary(s):
+    if IS_PY2:
+        return s.encode("utf-8") if isinstance(s, unicode) else s
+    return s.encode("utf-8") if isinstance(s, str) else s
+
+
+def to_hex(x):
+    if IS_PY2:
+        return hex(ord(x))
+    return hex(x)
+
+
+def hex_bytes_to_int(b):
+    if IS_PY2:
+        return int(''.join([str(ord(x)) for x in b]), 16)
+    return int(b.hex(), 16)
+
+
+def binary_ip_to_string(ip):
+    """
+    Get the ip-address as readable string from its binary representation.
+    :param ip: ip-address in binary format
+    :return: ip-address as string
+
+    >>> binary_ip_to_string
+    """
+    if IS_PY2:
+        return ".".join([str(ord(x)) for x in ip])
+    return ".".join([str(x) for x in ip])
 
 
 def ascii_integers_to_string(string, base=16, digits_per_char=2):
@@ -78,3 +105,8 @@ def write_data_to_image(data, extension=".png"):
     with temp_file as file:
         file.write(data)
     return temp_file.name
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
