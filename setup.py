@@ -21,9 +21,6 @@ except:
 
 class TestCommand(TestCommand):
 
-    description = 'run linters, tests and create a coverage report'
-    user_options = []
-
     def run(self):
         try:
             import kivy
