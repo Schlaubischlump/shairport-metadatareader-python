@@ -4,7 +4,7 @@ from setuptools import setup
 from setuptools.command.test import test as TestCommand
 import os
 
-# dynamically build requirements because of kivy/eventdispatcher dependency
+# dynamically build requirements for either kivy or eventdispatcher depending on which library is installed.
 IS_PY2 = sys.version_info.major <= 2
 
 requirements = ["requests"]
@@ -40,15 +40,13 @@ class TestCommand(TestCommand):
         except ImportError:
             pass
 
-
-
-
     def _run(self, command):
         try:
             subprocess.check_call(command)
         except subprocess.CalledProcessError as error:
             print('Command failed with exit code', error.returncode)
             sys.exit(error.returncode)
+
 
 setup(
     name='shairportmetadatareader',
