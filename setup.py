@@ -19,14 +19,14 @@ except:
     requirements += ["eventdispatcher"]
 
 
-class TestCommand(TestCommand):
+class CustomTestCommand(TestCommand):
 
     def run(self):
         try:
             import kivy
             # kivy is installed => run the tests with kivy
             os.environ["PREFER_KIVY"] = "1"
-            print("running tests with Kivy:")
+            print("running tests with kivy:")
             self._run(['pytest', '.'])
         except ImportError:
             pass
@@ -56,7 +56,7 @@ setup(
     license='GPLv3+',
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
-    cmdclass={'test': TestCommand},
+    cmdclass={'test': CustomTestCommand},
     long_description=open('Readme.md').read(),
     install_requires=requirements,
     classifiers = [
