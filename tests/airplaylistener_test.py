@@ -29,7 +29,6 @@ class TestAirplayListener(TestCase):
         listener.bind(track_info=on_track_info)
 
         def execute_step(item_str):
-            # Send user agent
             item = Item.item_from_xml_string(item_str)
             listener._process_item(item)
             return item
