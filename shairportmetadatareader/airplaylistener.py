@@ -24,25 +24,46 @@ import logging
 from time import sleep
 from threading import Thread
 
-try:
-    # prefer kivy if it is available
+#logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("AirplayListenerLogger")
+
+def load_kivy():
+    global EventDispatcher, StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
+        ListProperty, ObjectProperty
     from kivy.event import EventDispatcher
     from kivy.properties import StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
         ListProperty, ObjectProperty
-except ImportError:
-    # fallback to eventdispatcher
+    logger.info("Using kivy as backend.")
+
+def load_eventdispatcher():
+    global EventDispatcher, StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
+        ListProperty, ObjectProperty
     from eventdispatcher import EventDispatcher, StringProperty, OptionProperty, ListProperty, DictProperty, \
             LimitProperty as BoundedNumericProperty, Property as ObjectProperty
     BooleanProperty = lambda p: OptionProperty(False, options=[True, False])
+    logger.info("Using eventdispatcher as backend.")
+
+
+# Setting the "PREFER_KIVY" environment flag allows overriding the default behaviour of using kivy as backend.
+# Set this flag to "0" to try to load eventdispatcher and fallback to kivy. Using "1" reverses this behavior and tries
+# to load kivy before trying to load eventdispatcher (this is the default).
+if os.environ.get("PREFER_KIVY", "1") == "0":
+    try:
+        load_eventdispatcher()
+    except ImportError:
+        load_kivy()
+else:
+    try:
+        load_kivy()
+    except ImportError:
+        load_eventdispatcher()
+
 
 from .item import Item
 from .remote import AirplayRemote
 from .codetable import CORE, SSNC, core_code_dict, ssnc_code_dict
 from .util import write_data_to_image, to_unicode, hex_bytes_to_int
 from .shairport import stop_shairport_daemon, start_shairport_daemon
-
-
-logger = logging.getLogger("AirplayListenerLogger")
 
 
 # import this name to parse the dafault pipe

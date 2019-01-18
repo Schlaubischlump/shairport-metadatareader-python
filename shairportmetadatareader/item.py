@@ -47,6 +47,14 @@ class Item(object):
             self._data = None
             self._data_base64 = None
 
+    def __eq__(self, other):
+        if not other:
+            return False
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     # --------------------------------------------- xml parsing --------------------------------------------------------
 
     @classmethod

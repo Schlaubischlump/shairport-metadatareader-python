@@ -1,5 +1,8 @@
+import subprocess
 import sys
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
+import os
 
 # dynamically build requirements because of kivy/eventdispatcher dependency
 IS_PY2 = sys.version_info.major <= 2
@@ -16,6 +19,40 @@ except:
     requirements += ["eventdispatcher"]
 
 
+class TestCommand(TestCommand):
+
+    description = 'run linters, tests and create a coverage report'
+    user_options = []
+
+    def run(self):
+        try:
+            import kivy
+            # kivy is installed => run the tests with kivy
+            os.environ["PREFER_KIVY"] = "1"
+            print("running tests with Kivy:")
+            self._run(['pytest', '.'])
+        except ImportError:
+            pass
+
+        try:
+            import eventdispatcher
+            # eventdispatcher is installed => run the tests with eventdispatcher
+            os.environ["PREFER_KIVY"] = "0"
+            print("running tests with eventdispatcher:")
+            self._run(['pytest', '.'])
+        except ImportError:
+            pass
+
+
+
+
+    def _run(self, command):
+        try:
+            subprocess.check_call(command)
+        except subprocess.CalledProcessError as error:
+            print('Command failed with exit code', error.returncode)
+            sys.exit(error.returncode)
+
 setup(
     name='shairportmetadatareader',
     version='0.1.1',
@@ -24,6 +61,7 @@ setup(
     license='GPLv3+',
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
+    cmdclass={'test': TestCommand},
     long_description=open('Readme.md').read(),
     install_requires=requirements,
     classifiers = [

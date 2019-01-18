@@ -2,7 +2,6 @@ import atexit
 import logging
 import subprocess
 
-#logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("ShairportLogger")
 
 # internal variable to indicate that shairport was started as daemon by this process
