@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 CORE = "core"
 SSNC = "ssnc"
 
@@ -323,16 +323,15 @@ ssnc_code_dict = {
     "pfls": ("streampause", None),
     "prsm": ("streamstartresume", None),
     "pend": ("streamstop", None),
-    # current playback progress as RTP timestamp (start, cur, end)
-    # you can calculate (cur-start)/SAMPLE_RATE to get the actual time
+    # current playback position / end
     "prgr": ("playbackprogress", lambda item: [float(i) for i in item.data_str.split("/")]),
     # "airplay_volume,volume,lowest_volume,highest_volume"
     # where "volume", "lowest_volume" and "highest_volume" are given in dB.
     # The "airplay_volume" is send by the source (e.g. iTunes) to the player
     # and its range starts from 0.00 down to -30.00, whereby -144.00 means "mute".
     "pvol": ("playbackvolume", lambda item: [float(i) for i in item.data_str.split(",")]),
-    "daid": ("dacpid", "str"),
-    "acre": ("active", "str"),
+    "daid": ("dacpid", "str"),  # DACP-ID
+    "acre": ("active", "str"),  # Active Remote token
     "snua": ("useragent", "str"),
     "flsr": ("flushrequested", None),
     "pffr": ("firstframreceived", None),

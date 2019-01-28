@@ -4,10 +4,8 @@ See: https://nto.github.io/AirPlay.html#audio-remotecontrol
 """
 import requests
 from enum import Enum
-from zeroconf import ServiceBrowser, Zeroconf
+from ..util import to_unicode
 
-from ..util import to_unicode, binary_ip_to_string
-from .airplayservicelistener import AirplayServiceListener
 
 AIRPLAY_ZEROCONF_SERVICE = "_dacp._tcp.local."
 
@@ -66,6 +64,10 @@ class AirplayRemote(object):
         :param timeout: time after which the search for the airplay remote will be terminated
         :return: instance of AirplayRemote
         """
+        from zeroconf import ServiceBrowser, Zeroconf
+        from .airplayservicelistener import AirplayServiceListener
+        from ..util import binary_ip_to_string
+
         zeroconf = Zeroconf()
         listener = None
         try:

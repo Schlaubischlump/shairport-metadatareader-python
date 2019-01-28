@@ -143,6 +143,14 @@ class AirplayListener(EventDispatcher):
         self._artwork = ""
         self._has_remote_data = [False, False]  # [has dacp_id, has active_remote]
 
+        # There is a bug (?) inside shairport where sometimes after pause if pressed another play command is send,
+        # although play was not pressed.
+        # Normally a progress message is send before or directly after a play message is send.
+        # Check if progress is send before play or if play was send before progress. If so then change the playback
+        # state to "play".
+        self._did_receive_progress_msg = False
+        self._did_receive_play_msg = False
+
     def __del__(self):
         # try to stop shairport if the instance of this class is destroyed
         stop_shairport_daemon()
@@ -154,10 +162,12 @@ class AirplayListener(EventDispatcher):
         Get an airplay remote to control the client.
         :return: AirplayRemote Instance.
         """
+
+        # use zeroconf to find the remote
         if not self.has_remote_data:
             logger.warning("No connected airplay device found.")
             return None
-        # add this point the dacp-id and active-remote is already send
+        # at this point the dacp-id and active-remote is already send
         # this might take some time
         return AirplayRemote.get_remote(self.dacp_id, self.active_remote, timeout=timeout)
 
@@ -228,7 +238,7 @@ class AirplayListener(EventDispatcher):
             code = to_unicode(msg_data[4:8])
 
             if code == "chnk":
-                # accumulate data if a only a chunk is send
+                # accumulate data if only a chunk is send
                 i += 1
                 chunk_index = hex_bytes_to_int(msg_data[8:12])   # position of the chunk inside the target bytes array
                 chunk_count = hex_bytes_to_int(msg_data[12:16])  # amount of chunks which need to be received
@@ -236,6 +246,7 @@ class AirplayListener(EventDispatcher):
                 if not chunks:
                     chunks = [b""]*chunk_count
                 # insert data chunk into the array at the correct position
+                # there is no guarantee that the chunks are received in the correct order
                 chunks[chunk_index] = msg_data[24:]
 
                 # all chunks were received => create the item
@@ -283,8 +294,7 @@ class AirplayListener(EventDispatcher):
                             self._process_item(item)
                         tmp = ""
                     elif strip_line.startswith("<item>"):
-                        # if only a closing tag is missing we try to close the tag
-                        # and parse the data
+                        # if only a closing tag is missing we try to close the tag and try to parse the data
                         if tmp != "":
                             item = Item.item_from_xml_string(tmp + "</item>")
                             if item:
@@ -338,14 +348,30 @@ class AirplayListener(EventDispatcher):
                 self._tmp_track_info = {}
             elif item.code == "pfls":
                 self.playback_state = "pause"
+                self._did_receive_progress_msg = False
+                self._did_receive_play_msg = False
             elif item.code == "prsm":
-                self.playback_state = "play"
+                self._did_receive_play_msg = True
+                # workaround for a bug inside shairport (see __init__ for details)
+                if self._did_receive_progress_msg:
+                    self.playback_state = "play"
+                    self._did_receive_progress_msg = False
+                    self._did_receive_play_msg = False
             # to inaccurate
             elif item.code == "pend":
                 self.playback_state = "stop"
                 #self.track_info = {}
+                self._did_receive_progress_msg = False
+                self._did_receive_play_msg = False
                 self.connected = False
             elif item.code == "prgr":
+                self._did_receive_progress_msg = True
+                # workaround for a bug inside shairport (see __init__ for details)
+                if self._did_receive_play_msg:
+                    self.playback_state = "play"
+                    self._did_receive_progress_msg = False
+                    self._did_receive_play_msg = False
+
                 # this calculation seems inaccurate => limit the values to positive numbers
                 start, cur, end = item.data()
                 self.playback_progress = [max(0, (cur-start)/self._sample_rate), max(0, (end-start)/self._sample_rate)]

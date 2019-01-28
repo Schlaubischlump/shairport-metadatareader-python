@@ -104,8 +104,9 @@ class Item(object):
                 _, dtype = ssnc_code_dict[self.code]
             elif (self.type == CORE) and (self.code in core_code_dict):
                 _, dtype = core_code_dict[self.code]
-            else:
-                # could not guess the dtype, just return the raw data
+
+            # could not guess the dtype, just return the raw data
+            if dtype is None:
                 return self._data
 
         # sanity check

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import socket
 from unittest import TestCase, main
 
@@ -96,7 +97,7 @@ class TestAirplayListener(TestCase):
         r.register_service(info)
 
         # get a reference to the remote
-        remote = listener.get_remote(timeout=1)
+        remote = listener.get_remote(timeout=2)
 
         # remove the fake service
         r.unregister_service(info)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from unittest import TestCase, main
 from shairportmetadatareader.item import Item
 from shairportmetadatareader.codetable import SSNC
