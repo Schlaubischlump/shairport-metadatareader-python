@@ -70,5 +70,4 @@ while True:
             # you should catch exceptions thrown by this function, in case the remote connection is lost
             remote.send_command(allowed_cmds[cmd-1])
     except Exception as e:
-        raise e
         print("Illegal command: {0}".format(cmd))
