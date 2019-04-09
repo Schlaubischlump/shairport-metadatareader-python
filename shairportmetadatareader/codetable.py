@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Core and shairport-sync codes send by shairport-sync.
+"""
 CORE = "core"
 SSNC = "ssnc"
 

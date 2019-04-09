@@ -11,7 +11,7 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 
-from shairportmetadatareader import AirplayListener, DEFAULT_SOCKET
+from shairportmetadatareader import AirplayUDPListener
 
 Builder.load_string("""
 
@@ -102,11 +102,11 @@ class MusicPlayer(App):
         self.root = RootLayout()
 
         # start shairport-sync and listen for airplay events
-        self.listener = AirplayListener()
+        self.listener = AirplayUDPListener()
         self.listener.bind(track_info=self.root.on_track_info,
                            artwork=self.root.on_artwork,
                            has_remote_data=self.root.on_has_remote)
-        self.listener.start_listening(socket_addr=DEFAULT_SOCKET)
+        self.listener.start_listening()
 
         return self.root
 

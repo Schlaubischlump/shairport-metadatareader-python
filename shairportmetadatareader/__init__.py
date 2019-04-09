@@ -1,12 +1,12 @@
+import os
+
 from .shairport import start_shairport_daemon, stop_shairport_daemon
-from .airplaylistener import AirplayListener, DEFAULT_PIPE_FILE, DEFAULT_SOCKET
+from .listener import AirplayPipeListener, AirplayUDPListener, DEFAULT_PIPE_FILE, DEFAULT_SOCKET
 from .remote import AirplayRemote, AirplayCommand
 
 
-import os
-
-__all__ = ["AirplayListener", "AirplayRemote", "AirplayCommand", "DEFAULT_PIPE_FILE", "DEFAULT_SOCKET",
-           "start_shairport_daemon", "stop_shairport_daemon"]
+__all__ = ["AirplayPipeListener", "AirplayUDPListener", "DEFAULT_PIPE_FILE", "DEFAULT_SOCKET",
+           "start_shairport_daemon", "stop_shairport_daemon",  "AirplayRemote", "AirplayCommand"]
 
 
 def which(program):

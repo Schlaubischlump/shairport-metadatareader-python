@@ -9,7 +9,7 @@ The airplay client can be controlled by entering the numbers which correspond to
 import logging
 from time import sleep
 from shairportmetadatareader.util import IS_PY2
-from shairportmetadatareader import AirplayListener, AirplayCommand, DEFAULT_SOCKET#, DEFAULT_PIPE_FILE
+from shairportmetadatareader import AirplayCommand, AirplayUDPListener, #AirplayPipeListener
 
 # show all warnings
 logging.basicConfig(level=logging.DEBUG)
@@ -32,9 +32,10 @@ def on_track_info(listener, info):
 
 
 # listen for track information changes using shairport-syncs udp port
-listener = AirplayListener()
+listener = AirplayUDPListener()
 listener.bind(track_info=on_track_info)
-listener.start_listening(socket_addr=DEFAULT_SOCKET) #pipe_file=DEFAULT_PIPE_FILE
+listener.start_listening()
+print("Okay")
 
 # wait till all data to create an airplay remote is available
 while not listener.has_remote_data:

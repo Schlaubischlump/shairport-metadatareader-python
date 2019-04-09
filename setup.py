@@ -1,3 +1,8 @@
+"""
+setup.py to 'build', 'install' and 'test' this package.
+Usage: python setup.py 'command'
+"""
+
 import subprocess
 import sys
 from setuptools import setup
@@ -20,6 +25,9 @@ except:
 
 
 class CustomTestCommand(TestCommand):
+    """
+    Class to run testcases for kivy as well as for eventdispatcher backend.
+    """
 
     def run(self):
         try:

@@ -22,7 +22,7 @@ In addition, it includes a `remote` sub-package to remotely control the Airplay 
 ## Example (Read Metadata)
 ```Python
 from time import sleep
-from shairportmetadatareader import AirplayListener
+from shairportmetadatareader import AirplayUDPListener #, AirplayPipeListener
 
 def on_track_info(lis, info):
     """
@@ -32,9 +32,9 @@ def on_track_info(lis, info):
     """
     print(info)
 
-listener = AirplayListener()
+listener = AirplayUDPListener() # You can use AirplayPipeListener as well
 listener.bind(track_info=on_track_info) # receive callbacks for metadata changes
-listener.start_listening() # read the data asynchronously from the pipe
+listener.start_listening() # read the data asynchronously from the udp server
 sleep(60) # receive data for 60 seconds
 listener.stop_listening()
 ```

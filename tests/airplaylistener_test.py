@@ -2,7 +2,7 @@
 import socket
 from unittest import TestCase, main
 
-from shairportmetadatareader import AirplayListener
+from shairportmetadatareader.listener.airplaylistener import AirplayListener
 from shairportmetadatareader.item import Item
 from shairportmetadatareader.codetable import core_code_dict
 from shairportmetadatareader.remote.airplayservicelistener import AIRPLAY_PREFIX

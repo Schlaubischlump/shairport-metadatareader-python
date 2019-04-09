@@ -1,43 +1,59 @@
-from __future__ import division
-
 """
-# See: https://github.com/mikebrady/shairport-sync-metadata-reader
+See: https://github.com/mikebrady/shairport-sync-metadata-reader
+
 We use two 4-character codes to identify each piece of data, the type and the code.
 The first 4-character code, called the type, is either:
-- core for all the regular metadadata coming from iTunes, etc., or
+- core for all the regular metadata coming from iTunes, etc., or
 - ssnc (for 'shairport-sync') for all metadata coming from Shairport Sync itself, such as start/end delimiters, etc.
 
-For core metadata, the second 4-character code is the 4-character metadata code that comes from iTunes etc. See, 
-for example, https://code.google.com/p/ytrack/wiki/DMAP for information about the significance of the codes. 
-The original data supplied by the source, if any, follows, and is encoded in base64 format. The length of the data is 
+For core metadata, the second 4-character code is the 4-character metadata code that comes from iTunes etc. See,
+for example, https://code.google.com/p/ytrack/wiki/DMAP for information about the significance of the codes.
+The original data supplied by the source, if any, follows, and is encoded in base64 format. The length of the data is
 also provided.
 
-For ssnc metadata, the second 4-character code is used to distinguish the messages. Cover art, coming from the source, 
-is not tagged in the same way as other metadata, it seems, so is sent as an ssnc type metadata message with the code 
-PICT. Progress information, similarly, is not tagged like other source-originated metadata, so it is sent as an ssnc 
+For ssnc metadata, the second 4-character code is used to distinguish the messages. Cover art, coming from the source,
+is not tagged in the same way as other metadata, it seems, so is sent as an ssnc type metadata message with the code
+PICT. Progress information, similarly, is not tagged like other source-originated metadata, so it is sent as an ssnc
 type with the code prgr.
 """
-import os
-import stat
-import socket
-import logging
-from time import sleep
-from threading import Thread
+from __future__ import division
 
-#logging.basicConfig(level=logging.INFO)
+import os
+import logging
+
+
+from ..remote import AirplayRemote
+from ..codetable import CORE, SSNC, core_code_dict, ssnc_code_dict
+from ..util import write_data_to_image
+from ..shairport import stop_shairport_daemon, start_shairport_daemon
+
+
+# pylint: disable=C0103
 logger = logging.getLogger("AirplayListenerLogger")
+logger.setLevel(logging.INFO)
 
 def load_kivy():
+    """
+    Load all required Properties from kivy.
+    """
+    # pylint: disable=W0602, W0601
     global EventDispatcher, StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
         ListProperty, ObjectProperty
     from kivy.event import EventDispatcher
-    from kivy.properties import StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
+    # pylint: disable=W0621, E0611
+    from kivy.properties import StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty,\
         ListProperty, ObjectProperty
     logger.info("Using kivy as backend.")
 
+
 def load_eventdispatcher():
+    """
+    Load all required Properties from eventdispatcher.
+    """
+    # pylint: disable=W0602, W0601
     global EventDispatcher, StringProperty, OptionProperty, DictProperty, BooleanProperty, BoundedNumericProperty, \
         ListProperty, ObjectProperty
+    # pylint: disable=W0621, E0611
     from eventdispatcher import EventDispatcher, StringProperty, OptionProperty, ListProperty, DictProperty, \
             LimitProperty as BoundedNumericProperty, Property as ObjectProperty
     BooleanProperty = lambda p: OptionProperty(False, options=[True, False])
@@ -59,18 +75,6 @@ else:
         load_eventdispatcher()
 
 
-from .item import Item
-from .remote import AirplayRemote
-from .codetable import CORE, SSNC, core_code_dict, ssnc_code_dict
-from .util import write_data_to_image, to_unicode, hex_bytes_to_int
-from .shairport import stop_shairport_daemon, start_shairport_daemon
-
-
-# import this name to parse the dafault pipe
-DEFAULT_PIPE_FILE = "/tmp/shairport-sync-metadata"
-# import this name to use the dafault socket
-DEFAULT_SOCKET = ("127.0.0.1", 5555)
-
 # core codes which should be included in the track information field
 CORE_CODE_WHITELIST = {'mikd', 'minm', 'mper', 'miid', 'asal', 'asar', 'ascm', 'asco', 'asbr', 'ascp', 'asda', 'aspl',
                        'asdm', 'asdc', 'asdn', 'aseq', 'asgn', 'asdt', 'asrv', 'assr', 'assz', 'asst', 'assp', 'astm',
@@ -79,14 +83,18 @@ CORE_CODE_WHITELIST = {'mikd', 'minm', 'mper', 'miid', 'asal', 'asar', 'ascm', '
                        'aeEN'}
 
 
+# pylint: disable=R0902, E0602
 class AirplayListener(EventDispatcher):
+    """
+    Class to listen to shairport metadata events and receive a remote control instance to control playback.
+    """
 
     connected = BooleanProperty(False)
     '''True if a device is connected, otherwise false.'''
 
     has_remote_data = BooleanProperty(False)
     '''
-    True if the dacp_id and active_remote token are available. An event might be better suited for this case. 
+    True if the dacp_id and active_remote token are available. An event might be better suited for this case.
     Todo: Find a way to make the event dispatching work with kivy and event dispatcher.
     '''
 
@@ -143,8 +151,8 @@ class AirplayListener(EventDispatcher):
         self._artwork = ""
         self._has_remote_data = [False, False]  # [has dacp_id, has active_remote]
 
-        # There is a bug (?) inside shairport where sometimes after pause if pressed another play command is send,
-        # although play was not pressed.
+        # There is a bug (?) inside shairport where sometimes after pause is pressed another play command is send,
+        # although play was not pressed by the user.
         # Normally a progress message is send before or directly after a play message is send.
         # Check if progress is send before play or if play was send before progress. If so then change the playback
         # state to "play".
@@ -171,46 +179,19 @@ class AirplayListener(EventDispatcher):
         # this might take some time
         return AirplayRemote.get_remote(self.dacp_id, self.active_remote, timeout=timeout)
 
-    # ------------------------------------------------ listening logic -------------------------------------------------
+    # -------------------------------------------- start / stop listening ----------------------------------------------
 
-    def start_listening(self, pipe_file=None, socket_addr=None):
+    def start_listening(self):
         """
-        Start shairport-sync and continuously parse the metadata pipe or the UDP server in a background thread.
-        If pipe_file and socket_addr are both None, this method will fall back to parsing the DEFAULT_PIPE_FILE.
-        You should only specify the pipe_file or the socket_addr at a time. If you set both arguments, the pipe_file
-        will be used and the socket_addr is ignored.
-        :param pipe_file: path to shairport-sync pipe file
-        :param socket_addr: tuple consisting of (socket_ip, socket_port)
+        Start shairport-sync and continuously parse the metadata in a background thread.
+        Each subclass should override this method.
         """
-        if pipe_file and socket_addr:
-            logger.warning("Ambiguous parameter configuration. Falling back to pipe_file.")
-
-        # use the default pipe if no pipe and no socket is specified
-        if not pipe_file and not socket_addr:
-            pipe_file = DEFAULT_PIPE_FILE
-
-        # sanity checks
-        if pipe_file and not isinstance(pipe_file, str):
-            raise ValueError("Pipefile must be a string.")
-
-        if socket_addr and not (isinstance(socket_addr, list) or isinstance(socket_addr, tuple)):
-            raise ValueError("Socket_addr must be a tuple consisting of the ip address and the port number.")
-
         # try to start shairport-sync daemon
         start_shairport_daemon()
 
-        # read the pipe or the socket in a background thread
-        if pipe_file:
-            t = Thread(target=self.parse_pipe, args=(pipe_file,))
-        else:
-            t = Thread(target=self.parse_socket, args=(socket_addr,))
-        t.daemon = True
-        t.start()
-
     def stop_listening(self):
         """
-        Stop parsing the metadata pipe or the UDP server and stop the shairport-sync daemon if it was started inside the
-        start_listening method.
+        Stop parsing the metadata and stop the shairport-sync daemon started inside the start_listening method.
         """
         # stop metadata reading
         self._is_listening = False
@@ -218,93 +199,9 @@ class AirplayListener(EventDispatcher):
         # try to stop shairport-sync
         stop_shairport_daemon()
 
-    def parse_socket(self, socket_addr=DEFAULT_SOCKET, buffer_size=65000):
-        """
-        Parse the udp socket for metadata information. This method is blocking.
-        :param socket_addr: tuple consisting of (ip_str, port_number)
-        :param buffer_size: default buffer size to receive (65000 is the shairport-sync default)
-        """
-        sock = socket.socket(socket.AF_INET,  socket.SOCK_DGRAM)  # Internet UDP socket
-        sock.bind(socket_addr)
-
-        self._is_listening = True
-
-        i = 0        # number of chunks which were already received
-        chunks = []  # list with all chunks
-
-        while self._is_listening:
-            msg_data, addr = sock.recvfrom(buffer_size)
-            item_type = to_unicode(msg_data[:4])
-            code = to_unicode(msg_data[4:8])
-
-            if code == "chnk":
-                # accumulate data if only a chunk is send
-                i += 1
-                chunk_index = hex_bytes_to_int(msg_data[8:12])   # position of the chunk inside the target bytes array
-                chunk_count = hex_bytes_to_int(msg_data[12:16])  # amount of chunks which need to be received
-                # create an empty dummy array for all chunks
-                if not chunks:
-                    chunks = [b""]*chunk_count
-                # insert data chunk into the array at the correct position
-                # there is no guarantee that the chunks are received in the correct order
-                chunks[chunk_index] = msg_data[24:]
-
-                # all chunks were received => create the item
-                if chunk_count == i:
-                    item = Item(item_type=to_unicode(msg_data[16:20]),
-                                code=to_unicode(msg_data[20:24]),
-                                text=b"".join(chunks),
-                                length=sum(len(c) for c in chunks),
-                                encoding="bytes")
-                    self._process_item(item)
-            else:
-                # reset chunk data if at least one chunk was received in the meantime
-                if i > 0:
-                    i = 0
-                    chunks = []
-
-                # process normal message which might include an optional argument
-                item = Item(item_type, code, text=msg_data[8:] or None, length=len(msg_data)-8, encoding="bytes")
-                self._process_item(item)
-
-    def parse_pipe(self, pipe_file=DEFAULT_PIPE_FILE):
-        """
-        Parse the metadata pipe file and process the information. This method is blocking.
-        :param pipe_file: path to the pipe file
-        """
-        # wait till the pipe file is found
-        while not os.path.exists(pipe_file) or not stat.S_ISFIFO(os.stat(pipe_file).st_mode):
-            logger.warning("Could not find pipe: {0}. Retrying in 5 seconds...".format(pipe_file))
-            sleep(5)
-
-        self._is_listening = True
-
-        tmp = ""  # temporary string which stores one item
-        while self._is_listening:
-            with open(pipe_file) as f:
-                for line in f:
-                    # service was stopped
-                    if not self._is_listening:
-                        break
-
-                    strip_line = line.strip()
-                    if strip_line.endswith("</item>"):
-                        item = Item.item_from_xml_string(tmp + strip_line)
-                        if item:
-                            self._process_item(item)
-                        tmp = ""
-                    elif strip_line.startswith("<item>"):
-                        # if only a closing tag is missing we try to close the tag and try to parse the data
-                        if tmp != "":
-                            item = Item.item_from_xml_string(tmp + "</item>")
-                            if item:
-                                self._process_item(item)
-                        tmp = strip_line
-                    else:
-                        tmp += strip_line
-
     # ------------------------------------------------ data processing -------------------------------------------------
 
+    # pylint: disable=R0912, R0915
     def _process_item(self, item):
         """
         Process a single item from the pipe.
@@ -393,8 +290,8 @@ class AirplayListener(EventDispatcher):
                 # unused tag recognized => just ignore it
                 pass
             else:
-                logger.warning("Unknown shairport-sync core (ssnc) code \"{0}\", with base64 data {1}.".format(
-                    item.code, item.data_base64))
+                logger.warning("Unknown shairport-sync core (ssnc) code \"%s\", with base64 data %s.", item.code,
+                               item.data_base64)
 
         elif item.type == CORE:
             if item.code in CORE_CODE_WHITELIST:
@@ -406,7 +303,7 @@ class AirplayListener(EventDispatcher):
                 # you can still listen to the item property to respond to these keys
                 pass
             else:
-                logger.warning("Unknown DMAP-core code: {0}, with data {1}.".format(item.code, item.data_base64))
+                logger.warning("Unknown DMAP-core code: %s, with data %s.", item.code, item.data_base64)
 
         # send a callback if dacp_id and active_remote token are received
         if all(self._has_remote_data):
