@@ -1,8 +1,10 @@
 import os
+import logging
+
+logging.basicConfig()
 
 from .shairport import start_shairport_daemon, stop_shairport_daemon
-from .listener import AirplayPipeListener, AirplayUDPListener, DEFAULT_PIPE_FILE, DEFAULT_SOCKET, \
-    logger as listener_logger
+from .listener import AirplayPipeListener, AirplayUDPListener, DEFAULT_PIPE_FILE, DEFAULT_SOCKET
 from .remote import AirplayRemote, AirplayCommand
 
 
@@ -11,12 +13,10 @@ __all__ = ["AirplayPipeListener", "AirplayUDPListener", "DEFAULT_PIPE_FILE", "DE
 
 # Import mqtt backend if the necessary frameworks are available.
 try:
-    import paho.mqtt
-except ImportError:
-    listener_logger.warning("Can not find paho-mqtt library. AirplayMQTTListener is therefore not available.")
-else:
-    from .listener import AirplayMQTTListener
-    __all__ += ["AirplayMQTTListener"]
+    from .listener import AirplayMQTTListener, DEFAULT_BROKER
+    __all__ += ["AirplayMQTTListener", DEFAULT_BROKER]
+except:
+    pass
 
 
 def which(program):
