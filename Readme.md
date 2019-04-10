@@ -2,7 +2,7 @@
    
 **What is this?**    
 This python (>= 2.7 or >= 3.4) library includes a package `shairportmetadatareader` which parses the airplay metadata from the 
-shairport-sync pipe or the specified shairport-sync udp server.
+shairport-sync pipe, the specified shairport-sync udp server or the shairport-sync mqtt server.
 In addition, it includes a `remote` sub-package to remotely control the Airplay client. 
 
 **Requirements**    
@@ -39,7 +39,7 @@ listener.start_listening() # read the data asynchronously from the udp server
 sleep(60) # receive data for 60 seconds
 listener.stop_listening()
 ```
-For more advanced examples take a look at the examples folder.
+For more advanced examples take a look at the [examples folder](examples).
 
 **Special thanks goes to**   
 - luckydonald for his [shairport-decoder](https://github.com/luckydonald/shairport-decoder)   
