@@ -54,7 +54,6 @@ class AirplayMQTTListener(AirplayListener):
                     length=len(msg_data),
                     encoding="bytes")
         self._process_item(item)
-        #print("received message =",str(message.payload.decode("utf-8")))
 
     def start_listening(self):
         """
