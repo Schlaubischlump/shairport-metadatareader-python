@@ -9,7 +9,8 @@ __all__ = ["AirplayUDPListener", "AirplayPipeListener", "AirplayMQTTListener", "
 try:
     import paho.mqtt
 except ImportError:
-    logger.warning("Can not find paho-mqtt library. AirplayMQTTListener is therefore not available.")
+    logger.warning("Can not find paho-mqtt library. AirplayMQTTListener is therefore not available. If wish to use this"
+                   "backend run: pip install paho-mqtt.")
 else:
     from .airplaymqttlistener import AirplayMQTTListener, DEFAULT_BROKER
     __all__ += ["AirplayMQTTListener", "DEFAULT_BROKER"]
