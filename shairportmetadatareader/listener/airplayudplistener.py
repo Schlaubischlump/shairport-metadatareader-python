@@ -2,8 +2,8 @@ import socket
 from threading import Thread
 
 from ..item import Item
-from .airplaylistener import AirplayListener, logger
 from ..util import to_unicode, hex_bytes_to_int
+from .airplaylistener import AirplayListener, logger
 
 
 # import this name to use the dafault socket
@@ -25,12 +25,14 @@ class AirplayUDPListener(AirplayListener):
 
     @property
     def socket_addr(self):
+        """
+        :return: UPD socket address and port.
+        """
         return self._socket_addr
 
     def start_listening(self):
         """
-        Start shairport sync and continuously parse the metadata pipe in a background thread.
-        :return:
+        Start shairport sync and continuously parse the metadata socket in a background thread.
         """
         super(AirplayUDPListener, self).start_listening()
 

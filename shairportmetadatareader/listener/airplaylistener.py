@@ -86,7 +86,9 @@ CORE_CODE_WHITELIST = {'mikd', 'minm', 'mper', 'miid', 'asal', 'asar', 'ascm', '
 # pylint: disable=R0902, E0602
 class AirplayListener(EventDispatcher):
     """
-    Class to listen to shairport metadata events and receive a remote control instance to control playback.
+    Abstract class to listen to shairport metadata events and receive a remote control instance to control playback.
+    You should NOT use this class directly but instead subclass it. Subclasses should override at least the
+    `start_listening` method.
     """
 
     connected = BooleanProperty(False)
