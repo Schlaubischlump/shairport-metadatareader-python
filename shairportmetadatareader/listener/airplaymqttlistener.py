@@ -10,8 +10,9 @@ class AirplayMQTTListener(AirplayListener):
     """
     You should make sure that you configured shairport-sync correctly before using this backend class.
     This listener class only works if you already started your MQTT Broker instance and initialized this class with
-    the correct broker hostname. As of know user login or TLS protection are not supported (this might change in the
-    future).
+    the correct broker hostname. At this time the user login or TLS protection are not supported (this might change in the
+    future). Make sure that that you configured shairport-sync to send the raw data (`publish_raw`). The `enable_remote` option
+    is not required for the `AirplayRemote` instance to work.
     """
     def __init__(self, broker=DEFAULT_BROKER, topic=gethostname(), *args, **kwargs):
         """
