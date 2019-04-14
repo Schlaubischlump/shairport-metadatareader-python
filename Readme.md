@@ -11,7 +11,8 @@ In addition, it includes a `remote` sub-package to remotely control the Airplay 
 - [zeroconf](https://pypi.org/project/zeroconf/) `pip install zeroconf` (use version 0.19.1 or lower for python 2)   
 - [kivy](https://kivy.org/) `pip install kivy` **or** [eventdispatcher](https://github.com/lobocv/eventdispatcher)
 `pip install eventdispatcher`    
-- [paho-mqtt](https://pypi.org/project/paho-mqtt/) `pip install paho-mqtt`  (if you want to use AirplayMQTTListener)  
+- [paho-mqtt](https://pypi.org/project/paho-mqtt/) `pip install paho-mqtt`  (if you want to use AirplayMQTTListener)    
+- [libconf](https://pypi.org/project/libconf/) `pip install libconf` (if you want to use the [`libconf_init.py`](examples/libconf_init.py) example)    
 
 ## Installation
 `pip install git+https://github.com/Schlaubischlump/shairport-metadatareader-python`

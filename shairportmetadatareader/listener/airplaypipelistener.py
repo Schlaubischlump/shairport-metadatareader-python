@@ -11,17 +11,17 @@ DEFAULT_PIPE_FILE = "/tmp/shairport-sync-metadata"
 
 
 class AirplayPipeListener(AirplayListener):
-    def __init__(self, pipe_file=DEFAULT_PIPE_FILE, *args, **kwargs):
+    def __init__(self, pipe_name=DEFAULT_PIPE_FILE, *args, **kwargs):
         """
-        :param pipe_file: path to shairport-sync pipe file
+        :param pipe_name: path to shairport-sync pipe file
         """
         super(AirplayPipeListener, self).__init__(*args, **kwargs)
 
         # sanity checks
-        if pipe_file and not isinstance(pipe_file, str):
+        if pipe_name and not isinstance(pipe_name, str):
             raise ValueError("Pipefile must be a string.")
 
-        self._pipe_file = pipe_file
+        self._pipe_file = pipe_name
 
     @property
     def pipe_file(self):

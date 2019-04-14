@@ -138,7 +138,7 @@ class AirplayListener(EventDispatcher):
 
     # ------------------------------------------ constructor/destructor ------------------------------------------------
 
-    def __init__(self, sample_rate=44100):
+    def __init__(self, sample_rate=44100, **kwargs):
         """
         :param sample_rate: sample_rate used by shairport-sync. Needed to calculate the playback progress.
         """

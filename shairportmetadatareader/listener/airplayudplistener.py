@@ -7,21 +7,18 @@ from .airplaylistener import AirplayListener, logger
 
 
 # import this name to use the dafault socket
-DEFAULT_SOCKET = ("127.0.0.1", 5555)
+DEFAULT_ADDRESS = "127.0.0.1"
+DEFAULT_PORT = 5555
 
 
 class AirplayUDPListener(AirplayListener):
-    def __init__(self, socket_addr=DEFAULT_SOCKET, *args, **kwargs):
+    def __init__(self, socket_address=DEFAULT_ADDRESS, socket_port=DEFAULT_PORT, *args, **kwargs):
         """
         :param socket_addr: tuple consisting of (socket_ip, socket_port)
         """
         super(AirplayUDPListener, self).__init__(*args, **kwargs)
 
-        # sanity checks
-        if socket_addr and not isinstance(socket_addr, (list, tuple)):
-            raise ValueError("Socket_addr must be a tuple consisting of the ip address and the port number.")
-
-        self._socket_addr = socket_addr
+        self._socket_addr = (socket_address, socket_port)
 
     @property
     def socket_addr(self):

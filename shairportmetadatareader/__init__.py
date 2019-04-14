@@ -4,17 +4,17 @@ import logging
 logging.basicConfig()
 
 from .shairport import start_shairport_daemon, stop_shairport_daemon
-from .listener import AirplayPipeListener, AirplayUDPListener, DEFAULT_PIPE_FILE, DEFAULT_SOCKET
+from .listener import AirplayPipeListener, AirplayUDPListener, DEFAULT_PIPE_FILE, DEFAULT_ADDRESS, DEFAULT_PORT
 from .remote import AirplayRemote, AirplayCommand
 
 
-__all__ = ["AirplayPipeListener", "AirplayUDPListener", "DEFAULT_PIPE_FILE", "DEFAULT_SOCKET",
+__all__ = ["AirplayPipeListener", "AirplayUDPListener", "DEFAULT_PIPE_FILE", "DEFAULT_ADDRESS", "DEFAULT_PORT",
            "start_shairport_daemon", "stop_shairport_daemon",  "AirplayRemote", "AirplayCommand"]
 
 # Import mqtt backend if the necessary frameworks are available.
 try:
-    from .listener import AirplayMQTTListener, DEFAULT_BROKER
-    __all__ += ["AirplayMQTTListener", DEFAULT_BROKER]
+    from .listener import AirplayMQTTListener, DEFAULT_BROKER, DEFAULT_MQTT_PORT
+    __all__ += ["AirplayMQTTListener", "DEFAULT_BROKER", "DEFAULT_MQTT_PORT"]
 except:
     pass
 

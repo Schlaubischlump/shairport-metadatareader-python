@@ -5,6 +5,7 @@ from ..item import Item
 from .airplaylistener import AirplayListener, logger
 
 DEFAULT_BROKER = "127.0.0.1" #"iot.eclipse.org""
+DEFAULT_MQTT_PORT = 1883
 
 class AirplayMQTTListener(AirplayListener):
     """
@@ -14,17 +15,17 @@ class AirplayMQTTListener(AirplayListener):
     future). Make sure that that you configured shairport-sync to send the raw data (`publish_raw`). The `enable_remote` option
     is not required for the `AirplayRemote` instance to work.
     """
-    def __init__(self, broker=DEFAULT_BROKER, topic=gethostname(), *args, **kwargs):
+    def __init__(self, hostname=DEFAULT_BROKER, port=DEFAULT_MQTT_PORT, topic=gethostname(), *args, **kwargs):
         """
-        :param broker: name of the mqtt broker
+        :param hostname: name of the mqtt broker
         :param topic: name of the mqtt broker (Use None to use the default hostname)
         """
         super(AirplayMQTTListener, self).__init__(*args, **kwargs)
 
-        if broker and not isinstance(broker, str):
+        if hostname and not isinstance(hostname, str):
             raise ValueError("Broker should be the broker hostname as string.")
 
-        self._broker = broker
+        self._broker = hostname
         self._topic = topic
 
     @property

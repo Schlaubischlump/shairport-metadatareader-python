@@ -57,7 +57,7 @@ class CustomTestCommand(TestCommand):
 
 setup(
     name='shairportmetadatareader',
-    version='0.1.0b1',
+    version='0.1.0b2',
     author='SchlaubiSchlump',
     packages=['shairportmetadatareader', 'shairportmetadatareader.remote', 'shairportmetadatareader.listener'],
     license='GPLv3+',
