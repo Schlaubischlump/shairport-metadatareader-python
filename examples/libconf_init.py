@@ -6,11 +6,10 @@ according to the available configured backends.
 """
 
 import time
+import platform
 import io, libconf
 
 import shairportmetadatareader
-
-DEFAULT_CONF_PATH =  "/etc/shairport-sync.conf" #"/usr/local/etc/shairport-sync/shairport-sync.conf"
 
 
 class MetadataNotEnabledError(Exception):
@@ -27,6 +26,23 @@ class NoBackendAvailableError(Exception):
     pass
 
 
+def get_default_config_path():
+    """
+    :return: default path to the configuration file for the specific platform
+    """
+    # See: https://github.com/mikebrady/shairport-sync
+    # Readme section: Choose the location of the configuration file
+
+    # A final consideration is the location of the configuration file shairport-sync.conf. This will be placed in the
+    # directory specified by the sysconfdir configuration variable, which defaults to /usr/local/etc. This is normal in
+    # BSD Unixes, but is unusual in Linux. Hence, for Linux installations, you need to set the sysconfdir variable to
+    # /etc using the configuration setting --sysconfdir=/etc.
+
+    if platform.system() == "Linux":
+        return "/etc/shairport-sync.conf"
+    return "/usr/local/etc/shairport-sync/shairport-sync.conf"
+
+
 def get_listener_for_config_file(path):
     """
     Create an AirplayListener instance according to a specific config file.
@@ -35,11 +51,11 @@ def get_listener_for_config_file(path):
     :param path: path to the shairport-sync.conf file
     :return: AirplayListener instance
     """
-    config_file = io.open(DEFAULT_CONF_PATH)
+    config_file = io.open(path)
     config = libconf.load(config_file)
     config_file.close()
 
-    # Make sure that the metadata section is configure correctly
+    # Make sure that the metadata section is configured correctly
     metadata = config.metadata
     mqtt = config.mqtt
 
@@ -81,7 +97,9 @@ def on_track_info(listener, info):
 
 
 # Listen for metadata changes for 60 seconds
-listener = get_listener_for_config_file(DEFAULT_CONF_PATH)
+conf_path = get_default_config_path()
+
+listener = get_listener_for_config_file(conf_path)
 listener.bind(track_info=on_track_info)
 listener.start_listening()
 time.sleep(60)
