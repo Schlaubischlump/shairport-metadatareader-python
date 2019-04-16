@@ -1,11 +1,11 @@
 # Shairport-Metadatareader-Python
    
-**What is this?**    
+## What is this? 
 This python (>= 2.7 or >= 3.4) library includes a package `shairportmetadatareader` which parses the airplay metadata from the 
 [shairport-sync](https://github.com/mikebrady/shairport-sync) pipe, the specified shairport-sync udp server or the shairport-sync mqtt server.
 In addition, it includes a `remote` sub-package to remotely control the Airplay client. 
 
-**Requirements**    
+## Requirements
 - [enum34](https://pypi.org/project/enum34/) `pip install enum34` (Python 2 only)   
 - [requests](http://www.python-requests.org/en/master/) `pip install requests`   
 - [zeroconf](https://pypi.org/project/zeroconf/) `pip install zeroconf` (use version 0.19.1 or lower for python 2)   
@@ -17,7 +17,7 @@ In addition, it includes a `remote` sub-package to remotely control the Airplay 
 ## Installation
 `pip install git+https://github.com/Schlaubischlump/shairport-metadatareader-python`
 
-## Bugs:
+## Bugs
 - I don't know. Let me know!   
 ...
 
@@ -40,8 +40,9 @@ listener.start_listening() # read the data asynchronously from the udp server
 sleep(60) # receive data for 60 seconds
 listener.stop_listening()
 ```
-Beside the current track information you can listen for the following events in the same manner as in the above example:
 
+## Events
+Beside the current track information you can listen for the following events in the same manner as in the above example:
 - `connected`: True if a device is connected, otherwise false.
 - `dacp_id`: Current DACP-ID of connected device.
 - `active_remote`: Active remote token used to remote control the airplay device.
@@ -59,6 +60,6 @@ Beside the current track information you can listen for the following events in 
     
 For more advanced examples take a look at the [examples folder](examples).
 
-**Special thanks goes to**   
+## Special thanks goes to
 - luckydonald for his [shairport-decoder](https://github.com/luckydonald/shairport-decoder)   
 - roblan for his [shairport-sync-reader](https://github.com/roblan/shairport-sync-reader)    
