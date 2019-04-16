@@ -40,6 +40,23 @@ listener.start_listening() # read the data asynchronously from the udp server
 sleep(60) # receive data for 60 seconds
 listener.stop_listening()
 ```
+Beside the current track information you can listen for the following events in the same manner as in the above example:
+
+- `connected`: True if a device is connected, otherwise false.
+- `dacp_id`: Current DACP-ID of connected device.
+- `active_remote`: Active remote token used to remote control the airplay device.
+- `has_remote_data`: True if the dacp_id and active_remote token are available
+- `client_name`: Name of the airplay client e.g John's iPhone.
+- `playback_state`: The current playback state as string (play, pause, stop).
+- `track_info`: Information about the currently playing track.
+- `playback_progress`: List consisting of two elements: current playback position, duration
+- `artwork`: Path to the artwork file of the current track stored in a temporary directory.
+- `user_agent`: Airplay user agent. e.g. iTunes/12.2 (Macintosh; OS X 10.9.5)
+- `airplay_volume`: Normalized volume between 0 and 1 send by the source (-1 for mute).
+- `volume`: Playback volume as normalized float value between 0 and 1.
+- `mute`: True if the airplay device is muted, otherwise False.    
+- `item`: Received item from shairport-sync pipe or server. Use this if you need more fine-grained control to react to a specific ssnc or core code.
+    
 For more advanced examples take a look at the [examples folder](examples).
 
 **Special thanks goes to**   
