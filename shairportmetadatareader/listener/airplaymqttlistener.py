@@ -35,6 +35,7 @@ class AirplayMQTTListener(AirplayListener):
         """
         return self._broker
 
+    @property
     def topic(self):
         """
         :return: MQTT topic as string.
@@ -68,8 +69,8 @@ class AirplayMQTTListener(AirplayListener):
         try:
             self._client.connect(self.broker)
             self._client.loop_start()
-            self._client.subscribe("/{0}/#".format(self._topic))
-            logger.info("Subscribe to %s: ...", "/{0}/#".format(self._topic))
+            self._client.subscribe("/{0}/#".format(self.topic))
+            logger.info("Subscribe to %s: ...", "/{0}/#".format(self.topic))
         except ConnectionRefusedError:
             logger.warning("Connection refused. Make sure that mosquitto is running in the background.")
         else:
