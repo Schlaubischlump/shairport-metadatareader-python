@@ -68,7 +68,7 @@ def get_listener_for_config_file(path):
               and metadata.get("socket_port", 0) > 0
     has_mqtt = mqtt.get("enabled", "no") == "yes" \
                and mqtt.get("hostname", "") != "" \
-               and mqtt.get("port", 0) != 0 \
+               and mqtt.get("port", "") != "" \
                and mqtt.get("publish_raw", "no") == "yes"
 
     # For some reason the mqtt port is a string and not and integer
