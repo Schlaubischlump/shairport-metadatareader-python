@@ -1,3 +1,6 @@
+"""
+Module to listen to the udp backend of shairport-sync.
+"""
 import socket
 from threading import Thread
 
@@ -12,7 +15,10 @@ DEFAULT_PORT = 5555
 
 
 class AirplayUDPListener(AirplayListener):
-    def __init__(self, socket_address=DEFAULT_ADDRESS, socket_port=DEFAULT_PORT, *args, **kwargs):
+    """
+    Airplay listener class to read the shairport-sync udp server backend.
+    """
+    def __init__(self, *args, socket_address=DEFAULT_ADDRESS, socket_port=DEFAULT_PORT, **kwargs):
         """
         :param socket_addr: tuple consisting of (socket_ip, socket_port)
         """
@@ -33,9 +39,9 @@ class AirplayUDPListener(AirplayListener):
         """
         super(AirplayUDPListener, self).start_listening()
 
-        t = Thread(target=self.parse_socket)
-        t.daemon = True
-        t.start()
+        thread = Thread(target=self.parse_socket)
+        thread.daemon = True
+        thread.start()
 
     def parse_socket(self, buffer_size=65000):
         """

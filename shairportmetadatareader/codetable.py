@@ -8,7 +8,7 @@ SSNC = "ssnc"
 # code: dmap.readable_code, data_type
 # the datatypes for some of these objects might be wrong
 # https://github.com/jkiddo/jolivia/blob/46e53969d4b4bfb4a538511591b9ad2a8f3fca80/jolivia.protocol/src/main/java/org/dyndns/jkiddo/dmp/IDmapProtocolDefinition.java#L154
-core_code_dict = {
+CORE_CODE_DICT = {
     "asaa": ("songalbumartist", "str"),                 # daap.songalbumartist
     "agal": ("unknown_al", "str"),                      # com.apple.itunes.unknown-al
     "agar": ("ar", "str"),                              # "unknown.ar
@@ -315,7 +315,7 @@ core_code_dict = {
 
 
 # shairport-sync codes
-ssnc_code_dict = {
+SSNC_CODE_DICT = {
     "pcst": ("picturestart", "int"),  # with rtptime
     "pcen": ("pictureend", "int"),    # with rtptime
     "PICT": ("artwork", "bytes"),

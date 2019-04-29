@@ -8,6 +8,8 @@ import subprocess
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
+# pylint: disable=C0103
+
 # dynamically build requirements for either kivy or eventdispatcher depending on which library is installed.
 IS_PY2 = sys.version_info.major <= 2
 
@@ -19,7 +21,7 @@ requirements += ["zeroconf==0.19.1", "enum34"] if IS_PY2 else ["zeroconf"]
 try:
     import kivy
     kivy.require("1.1.0")
-except:
+except Exception: # pylint: disable=W0703
     requirements += ["eventdispatcher"]
 
 
@@ -30,7 +32,7 @@ class CustomTestCommand(TestCommand):
 
     def run(self):
         try:
-            import kivy
+            import kivy # pylint: disable=W0621, W0611
             # kivy is installed => run the tests with kivy
             os.environ["PREFER_KIVY"] = "1"
             print("running tests with kivy:")
@@ -39,7 +41,7 @@ class CustomTestCommand(TestCommand):
             pass
 
         try:
-            import eventdispatcher
+            import eventdispatcher  # pylint: disable=W0611
             # eventdispatcher is installed => run the tests with eventdispatcher
             os.environ["PREFER_KIVY"] = "0"
             print("running tests with eventdispatcher:")
@@ -48,6 +50,7 @@ class CustomTestCommand(TestCommand):
             pass
 
     def _run(self, command):
+        # pylint: disable=R0201
         try:
             subprocess.check_call(command)
         except subprocess.CalledProcessError as error:
@@ -68,7 +71,7 @@ setup(
     },
     long_description=open('Readme.md').read(),
     install_requires=requirements,
-    classifiers = [
+    classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',

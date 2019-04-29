@@ -1,13 +1,17 @@
+"""
+Service listener instance to detect airplay services.
+"""
 import logging
 from time import sleep
 from threading import Thread
 
 AIRPLAY_PREFIX = "iTunes_Ctrl_"
 
+# pylint: disable=C0103
 logger = logging.getLogger("AirplayServiceListenerLogger")
 
 
-class AirplayServiceListener(object):
+class AirplayServiceListener(object): # pylint: disable=R0205
     """
     Listener for incoming airplay connections.
     """
@@ -21,28 +25,35 @@ class AirplayServiceListener(object):
         self.info = None
         self.is_listening = False
 
-    def remove_service(self, zeroconf, type, name):
+    def remove_service(self, zeroconf, stype, name):
+        """
+        Called when a service is removed.
+        :param zeroconf: zeroconf instance
+        :param stype: type of the service
+        :param name: name of the service
+        """
+        # pylint: disable=W0613
         if name.startswith(self._expected_name):
-            logger.info("Removed airplay service: {0}".format(name))
+            logger.info("Removed airplay service: %s", name)
             self.name = None
             self.info = None
         else:
-            logger.info("Service removed: {0}".format(name))
+            logger.info("Service removed: %s", name)
 
-    def add_service(self, zeroconf, type, name):
+    def add_service(self, zeroconf, stype, name):
         """
-        Called when a new service is detected
-        :param zeroconf:
-        :param type:
+        Called when a new service is detected.
+        :param zeroconf: zeroconf instance
+        :param stype: type of the service
         :param name: name of the service
         """
-        info = zeroconf.get_service_info(type, name)
+        info = zeroconf.get_service_info(stype, name)
         if name.startswith(self._expected_name):
             self.name = name
             self.info = info
-            logger.info("Added airplay service: {0} {1}".format(name, info))
+            logger.info("Added airplay service: %s %s", name, info)
         else:
-            logger.info("Service added: {0} {1}".format(name, info))
+            logger.info("Service added: %s %s", name, info)
 
     def start_listening(self):
         """
@@ -59,10 +70,10 @@ class AirplayServiceListener(object):
 
         self.is_listening = True
 
-        t = Thread(target=wait)
-        t.daemon=True
-        t.start()
-        return t
+        thread = Thread(target=wait)
+        thread.daemon = True
+        thread.start()
+        return thread
 
     def stop_listening(self):
         """

@@ -23,7 +23,7 @@ import logging
 
 
 from ..remote import AirplayRemote
-from ..codetable import CORE, SSNC, core_code_dict, ssnc_code_dict
+from ..codetable import CORE, SSNC, CORE_CODE_DICT, SSNC_CODE_DICT
 from ..util import write_data_to_image
 from ..shairport import stop_shairport_daemon, start_shairport_daemon
 
@@ -142,6 +142,7 @@ class AirplayListener(EventDispatcher):
         """
         :param sample_rate: sample_rate used by shairport-sync. Needed to calculate the playback progress.
         """
+        # pylint: disable=W0613
         super(AirplayListener, self).__init__()
         self._sample_rate = sample_rate  # sample rate used by shairport-sync
         self._is_listening = False  # is listening for metadata updates
@@ -183,7 +184,7 @@ class AirplayListener(EventDispatcher):
 
     # -------------------------------------------- start / stop listening ----------------------------------------------
 
-    def start_listening(self):
+    def start_listening(self): # pylint: disable=R0201
         """
         Start shairport-sync and continuously parse the metadata in a background thread.
         Each subclass should override this method.
@@ -288,7 +289,7 @@ class AirplayListener(EventDispatcher):
             elif item.code == "acre":
                 self.active_remote = item.data()
                 self._has_remote_data[1] = True
-            elif item.code in ssnc_code_dict:
+            elif item.code in SSNC_CODE_DICT:
                 # unused tag recognized => just ignore it
                 pass
             else:
@@ -298,9 +299,9 @@ class AirplayListener(EventDispatcher):
         elif item.type == CORE:
             if item.code in CORE_CODE_WHITELIST:
                 # save metadata info
-                dmap_key, data_type = core_code_dict[item.code]
+                dmap_key, data_type = CORE_CODE_DICT[item.code]
                 self._tmp_track_info[dmap_key] = item.data(dtype=data_type)
-            elif item.code in core_code_dict:
+            elif item.code in CORE_CODE_DICT:
                 # just ignore these and don't add them to the track info
                 # you can still listen to the item property to respond to these keys
                 pass

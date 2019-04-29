@@ -7,7 +7,8 @@ according to the available configured backends.
 
 import time
 import platform
-import io, libconf
+import io
+import libconf
 
 import shairportmetadatareader
 
@@ -16,6 +17,7 @@ class MetadataNotEnabledError(Exception):
     """
     Thrown if the metadata section inside the shairport-sync.conf is not enabled.
     """
+    # pylint: disable=W0107
     pass
 
 
@@ -23,6 +25,7 @@ class NoBackendAvailableError(Exception):
     """
     Thrown if neither the metadata pipe, nor the udp or mqtt backends are configured.
     """
+    # pylint: disable=W0107
     pass
 
 
@@ -85,22 +88,26 @@ def get_listener_for_config_file(path):
         return shairportmetadatareader.AirplayPipeListener(**metadata)
     if has_mqtt:
         return shairportmetadatareader.AirplayMQTTListener(**mqtt)
+    return None
 
 
-def on_track_info(listener, info):
+def on_track_info(lis, info):
     """
     Print the current track information.
-    :param listener: listener instance
+    :param lis: listener instance
     :param info: track information
     """
-    print("Listener: ", listener, "received information: ", info)
+    print("Listener: ", lis, "received information: ", info)
 
 
-# Listen for metadata changes for 60 seconds
-conf_path = get_default_config_path()
+if __name__ == "__main__":
+    # Listen for metadata changes for 60 seconds
+    # pylint: disable=C0103
+    conf_path = get_default_config_path()
 
-listener = get_listener_for_config_file(conf_path)
-listener.bind(track_info=on_track_info)
-listener.start_listening()
-time.sleep(60)
-listener.stop_listening()
+    # pylint: disable=C0103
+    listener = get_listener_for_config_file(conf_path)
+    listener.bind(track_info=on_track_info)
+    listener.start_listening()
+    time.sleep(60)
+    listener.stop_listening()

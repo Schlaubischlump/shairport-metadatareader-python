@@ -1,3 +1,6 @@
+"""
+Module to listen to the pipe backend of shairport-sync.
+"""
 import os
 import stat
 from time import sleep
@@ -11,7 +14,10 @@ DEFAULT_PIPE_FILE = "/tmp/shairport-sync-metadata"
 
 
 class AirplayPipeListener(AirplayListener):
-    def __init__(self, pipe_name=DEFAULT_PIPE_FILE, *args, **kwargs):
+    """
+    Airplay listener class to read the shairport-sync pipe backend.
+    """
+    def __init__(self, *args, pipe_name=DEFAULT_PIPE_FILE, **kwargs):
         """
         :param pipe_name: path to shairport-sync pipe file
         """
@@ -37,9 +43,9 @@ class AirplayPipeListener(AirplayListener):
         """
         super(AirplayPipeListener, self).start_listening()
 
-        t = Thread(target=self.parse_pipe)
-        t.daemon = True
-        t.start()
+        thread = Thread(target=self.parse_pipe)
+        thread.daemon = True
+        thread.start()
 
 
     def parse_pipe(self):
@@ -57,8 +63,8 @@ class AirplayPipeListener(AirplayListener):
 
         tmp = ""  # temporary string which stores one item
         while self._is_listening:
-            with open(self.pipe_file) as f:
-                for line in f:
+            with open(self.pipe_file) as pipe:
+                for line in pipe:
                     # service was stopped
                     if not self._is_listening:
                         break

@@ -1,18 +1,22 @@
+"""
+Single shaiport-sync information item.
+"""
 import logging
 from xml.etree.ElementTree import fromstring as xml_from_string, ParseError
 from datetime import datetime
 
-from .codetable import core_code_dict, ssnc_code_dict, CORE, SSNC
+from .codetable import CORE_CODE_DICT, SSNC_CODE_DICT, CORE, SSNC
+# pylint: disable=W1505
 from .util import ascii_integers_to_string, encoded_to_str, encodebytes, xml_to_dict, to_hex, to_unicode, to_binary
 
-logger = logging.getLogger("AirplayListenerLogger")
+logger = logging.getLogger("AirplayListenerLogger") # pylint: disable=C0103
 
 
-class Item(object):
+class Item(object): # pylint: disable=R0205
     """
     Class to represent a single item from the pipe or the udp server.
     """
-    def __init__(self, item_type, code, length=0, text=None, encoding=None):
+    def __init__(self, item_type, code, length=0, text=None, encoding=None): # pylint: disable=R0913
         """
         :param item_type: ssnc or core
         :param code: ssnc or core codes. See codetable.py for details.
@@ -73,7 +77,7 @@ class Item(object):
                 return None
 
             # parse attributes of item
-            type = ascii_integers_to_string(ele["item"]["type"])
+            itype = ascii_integers_to_string(ele["item"]["type"])
             code = ascii_integers_to_string(ele["item"]["code"])
             length = int(ele["item"]["length"])
 
@@ -81,10 +85,10 @@ class Item(object):
                 data = ele["item"]["data"]
                 text = data["#text"]
                 encoding = data["@encoding"]
-                return cls(type, code, length, text, encoding)
-            return cls(type, code, length)
+                return cls(itype, code, length, text, encoding)
+            return cls(itype, code, length)
         except ParseError:
-            logger.warning("Can not parse item: {0}".format(item_str))
+            logger.warning("Can not parse item: %s", item_str)
             return None
 
     # --------------------------------------------- convert data -------------------------------------------------------
@@ -95,15 +99,16 @@ class Item(object):
         :param dtype: type as which the _data should be interpreted. Use None to guess the type.
         :return: _data converted as dtype
         """
+        # pylint: disable=R0911, R0912
         if not self._data:
             return None
 
         if dtype is None:
             # try to guess the dtype
-            if (self.type == SSNC) and (self.code in ssnc_code_dict):
-                _, dtype = ssnc_code_dict[self.code]
-            elif (self.type == CORE) and (self.code in core_code_dict):
-                _, dtype = core_code_dict[self.code]
+            if (self.type == SSNC) and (self.code in SSNC_CODE_DICT):
+                _, dtype = SSNC_CODE_DICT[self.code]
+            elif (self.type == CORE) and (self.code in CORE_CODE_DICT):
+                _, dtype = CORE_CODE_DICT[self.code]
 
             # could not guess the dtype, just return the raw data
             if dtype is None:
@@ -115,46 +120,70 @@ class Item(object):
 
         if dtype == "bytes":
             return self._data
-        elif dtype == "str":
+        if dtype == "str":
             return self.data_str
-        elif dtype == "int":
+        if dtype == "int":
             return self.data_int
-        elif dtype == "date":
+        if dtype == "date":
             return self.data_date
-        elif dtype == "bool":
+        if dtype == "bool":
             return self.data_bool
-        elif dtype == "base64":
+        if dtype == "base64":
             return self.data_base64
-        elif callable(dtype):
+        if callable(dtype):
             return dtype(self)  # custom handler for data
         return self._data
 
     @property
     def data_bytes(self):
+        """
+        :return: data as bytes
+        """
         if self._data:
             return self._data
+        return None
 
     @property
     def data_str(self):
+        """
+        :return: data as str
+        """
         if self._data:
             return to_unicode(self._data)
+        return None
 
     @property
     def data_int(self):
+        """
+        :return: data as int
+        """
         if self._data:
             return int("0x" + ''.join([to_hex(x)[2:] for x in self._data]), base=16)
+        return None
 
     @property
     def data_date(self):
+        """
+        :return: data as date instance
+        """
         if self._data:
             return datetime.fromtimestamp(self.data_int)
+        return None
 
     @property
     def data_bool(self):
+        """
+        :return: data as bool
+        """
         if self._data:
             return bool(self.data_int)
+        return None
 
     @property
     def data_base64(self):
+        """
+        :return: data as bytes base64 encoded
+        """
         if self._data:
             return self._data_base64 if self._data_base64 else encodebytes(to_binary(self._data))
+        return None

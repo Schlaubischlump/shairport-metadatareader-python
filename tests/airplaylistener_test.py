@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
+"""
+Test the basic AirplayListener functionality.
+"""
 import socket
 from unittest import TestCase, main
+from zeroconf import ServiceInfo, Zeroconf
 
 from shairportmetadatareader.listener.airplaylistener import AirplayListener
 from shairportmetadatareader.item import Item
-from shairportmetadatareader.codetable import core_code_dict
+from shairportmetadatareader.codetable import CORE_CODE_DICT
 from shairportmetadatareader.remote.airplayservicelistener import AIRPLAY_PREFIX
-
-from zeroconf import ServiceInfo, Zeroconf
 
 
 LOCALHOST = "127.0.0.1"
@@ -15,13 +17,19 @@ AIRPLAY_PORT = 63309
 
 
 class TestAirplayListener(TestCase):
+    """
+    Class to test the AirplayListener base class.
+    """
 
     def test_process_item(self):
+        """
+        :return:
+        """
         # nonlocal is not available in python2, therefore use a list instead
         binding_was_called = [False]
 
         # check if the metadata is written to track_info and the callback is executed
-        def on_track_info(lis, info):
+        def on_track_info(_, info):
             self.assertTrue(len(info) > 0)
             binding_was_called[0] = True
 
@@ -31,7 +39,7 @@ class TestAirplayListener(TestCase):
 
         def execute_step(item_str):
             item = Item.item_from_xml_string(item_str)
-            listener._process_item(item)
+            listener._process_item(item) # pylint: disable=W0212
             return item
 
         # snua -- User Agent
@@ -62,7 +70,7 @@ class TestAirplayListener(TestCase):
         # end sending metadata -- Check if the track_info was written to the dictionary
         execute_step('<item><type>73736e63</type><code>6d64656e</code><length>10</length><data encoding="base64">'
                      'MjcyMjAxODYwMA==</data></item>')
-        dmap_key, data_type = core_code_dict[item.code]
+        dmap_key, data_type = CORE_CODE_DICT[item.code]
         self.assertTrue(listener.track_info[dmap_key] == item.data(data_type))
 
         # the track_info must be changed at this point => the binding function must already been called if everything
@@ -70,12 +78,15 @@ class TestAirplayListener(TestCase):
         self.assertTrue(binding_was_called[0])
 
     def test_get_remote(self):
+        """
+        :return:
+        """
         listener = AirplayListener()
 
         def execute_step(item_str):
             # Send user agent
             item = Item.item_from_xml_string(item_str)
-            listener._process_item(item)
+            listener._process_item(item) # pylint: disable=W0212
             return item
 
         # snua -- User Agent
@@ -91,16 +102,16 @@ class TestAirplayListener(TestCase):
                      'OEFBQTEyQzY2RDRBNzkwQQ==</data></item>')
 
         # register a fake airplay client service to receive events
-        r = Zeroconf()
+        zero_conf = Zeroconf()
         service_id = AIRPLAY_PREFIX + listener.dacp_id + "._dacp._tcp.local."
-        info =  ServiceInfo("_dacp._tcp.local.", service_id, socket.inet_aton(LOCALHOST), AIRPLAY_PORT, 0, 0, {})
-        r.register_service(info)
+        info = ServiceInfo("_dacp._tcp.local.", service_id, socket.inet_aton(LOCALHOST), AIRPLAY_PORT, 0, 0, {})
+        zero_conf.register_service(info)
 
         # get a reference to the remote
         remote = listener.get_remote(timeout=2)
 
         # remove the fake service
-        r.unregister_service(info)
+        zero_conf.unregister_service(info)
 
         # check if we were able to create a remote
         self.assertTrue(remote is not None)

@@ -1,3 +1,6 @@
+"""
+Package containing different listener classes for various backends.
+"""
 from .airplaylistener import logger
 from .airplaypipelistener import AirplayPipeListener, DEFAULT_PIPE_FILE
 from .airplayudplistener import AirplayUDPListener, DEFAULT_PORT, DEFAULT_ADDRESS

@@ -1,8 +1,11 @@
+"""
+Basic function to start and stop shairport-sync.
+"""
 import atexit
 import logging
 import subprocess
 
-logger = logging.getLogger("ShairportLogger")
+logger = logging.getLogger("ShairportLogger") # pylint: disable=C0103
 
 # internal variable to indicate that shairport was started as daemon by this process
 SHAIRPORT_RUNNING = False
@@ -20,10 +23,10 @@ def start_shairport_daemon(exec_path="shairport-sync"):
 
     if ret.returncode != 0:
         _, err = ret.communicate()
-        logger.warning("Can not launch shairport-sync: {0}".format(err.decode("utf-8")))
+        logger.warning("Can not launch shairport-sync: %s", err.decode("utf-8"))
     else:
         logger.info("Starting shairport-sync daemon.")
-        global SHAIRPORT_RUNNING
+        global SHAIRPORT_RUNNING # pylint: disable=W0603
         SHAIRPORT_RUNNING = True
 
 
@@ -32,7 +35,7 @@ def stop_shairport_daemon(exce_path="shairport-sync"):
     Stop the shairport daemon if it is running.
     :param exec_path: path to the executable
     """
-    global SHAIRPORT_RUNNING
+    global SHAIRPORT_RUNNING # pylint: disable=W0603
     if not SHAIRPORT_RUNNING:
         return
 
@@ -41,7 +44,7 @@ def stop_shairport_daemon(exce_path="shairport-sync"):
 
     if ret.returncode != 0:
         _, err = ret.communicate()
-        logger.warning("Can not stop shairport-sync: {0}".format(err.decode("utf-8")))
+        logger.warning("Can not stop shairport-sync: %s", err.decode("utf-8"))
     else:
         logger.info("Stopping shairport-sync daemon.")
         SHAIRPORT_RUNNING = False

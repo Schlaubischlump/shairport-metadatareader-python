@@ -1,3 +1,6 @@
+"""
+Module to listen to the MQTT backend of shairport-sync.
+"""
 from socket import gethostname
 from paho.mqtt.client import Client
 
@@ -11,13 +14,14 @@ class AirplayMQTTListener(AirplayListener):
     """
     You should make sure that you configured shairport-sync correctly before using this backend class.
     This listener class only works if you already started your MQTT Broker instance and initialized this class with
-    the correct broker hostname. At this time the user login or TLS protection are not supported (this might change in the
-    future). Make sure that that you configured shairport-sync to send the raw data (`publish_raw`). The `enable_remote` option
-    is not required for the `AirplayRemote` instance to work.
+    the correct broker hostname. At this time the user login or TLS protection are not supported (this might change in
+    the future). Make sure that that you configured shairport-sync to send the raw data (`publish_raw`).
+    The `enable_remote` option is not required for the `AirplayRemote` instance to work.
     """
-    def __init__(self, hostname=DEFAULT_BROKER, port=DEFAULT_MQTT_PORT, topic=gethostname(), *args, **kwargs):
+    def __init__(self, *args, hostname=DEFAULT_BROKER, port=DEFAULT_MQTT_PORT, topic=gethostname(), **kwargs):
         """
         :param hostname: name of the mqtt broker
+        :param port: port of the mqtt broker as int
         :param topic: name of the mqtt broker (Use None to use the default hostname)
         """
         super(AirplayMQTTListener, self).__init__(*args, **kwargs)
@@ -25,7 +29,9 @@ class AirplayMQTTListener(AirplayListener):
         if hostname and not isinstance(hostname, str):
             raise ValueError("Broker should be the broker hostname as string.")
 
+        self._client = None
         self._broker = hostname
+        self._port = port
         self._topic = topic
 
     @property
@@ -36,13 +42,20 @@ class AirplayMQTTListener(AirplayListener):
         return self._broker
 
     @property
+    def port(self):
+        """
+        :return: MQTT broker port as int.
+        """
+        return self._port
+
+    @property
     def topic(self):
         """
         :return: MQTT topic as string.
         """
         return self._topic
 
-    def receive_message(self, client, userdata, message):
+    def receive_message(self, client, userdata, message): # pylint: disable=W0613
         """
         Callback when the MQTT client receives a message.
         :param client: MQTT client instance
@@ -67,7 +80,7 @@ class AirplayMQTTListener(AirplayListener):
         self._client = Client("ShairportListener")
         self._client.on_message = self.receive_message
         try:
-            self._client.connect(self.broker)
+            self._client.connect(self.broker, port=self.port)
             self._client.loop_start()
             self._client.subscribe("/{0}/#".format(self.topic))
             logger.info("Subscribe to %s: ...", "/{0}/#".format(self.topic))

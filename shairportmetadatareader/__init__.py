@@ -1,7 +1,8 @@
+"""
+Main shairport-metadata-reader package to display shairport information and remote control the airplay device.
+"""
 import os
 import logging
-
-logging.basicConfig()
 
 from .shairport import start_shairport_daemon, stop_shairport_daemon
 from .listener import AirplayPipeListener, AirplayUDPListener, DEFAULT_PIPE_FILE, DEFAULT_ADDRESS, DEFAULT_PORT
@@ -9,13 +10,13 @@ from .remote import AirplayRemote, AirplayCommand
 
 
 __all__ = ["AirplayPipeListener", "AirplayUDPListener", "DEFAULT_PIPE_FILE", "DEFAULT_ADDRESS", "DEFAULT_PORT",
-           "start_shairport_daemon", "stop_shairport_daemon",  "AirplayRemote", "AirplayCommand"]
+           "start_shairport_daemon", "stop_shairport_daemon", "AirplayRemote", "AirplayCommand"]
 
 # Import mqtt backend if the necessary frameworks are available.
 try:
     from .listener import AirplayMQTTListener, DEFAULT_BROKER, DEFAULT_MQTT_PORT
     __all__ += ["AirplayMQTTListener", "DEFAULT_BROKER", "DEFAULT_MQTT_PORT"]
-except:
+except ImportError:
     pass
 
 
@@ -29,7 +30,7 @@ def which(program):
     def is_exe(fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
-    fpath, fname = os.path.split(program)
+    fpath, _ = os.path.split(program)
     if fpath:
         if is_exe(program):
             return program
@@ -43,7 +44,8 @@ def which(program):
 
 
 if not which("shairport-sync"):
-    import logging
-    logger = logging.getLogger("ShairportLogger")
+    logging.basicConfig()
+
+    logger = logging.getLogger("ShairportLogger") # pylint: disable=C0103
     logger.warning("Can not find executable shairport-sync in your PATH. Make sure that shairport-sync is installed "
                    "and configured to support writing the metadata to the pipe or the UDP server.")
