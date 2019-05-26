@@ -53,7 +53,7 @@ class AirplayUDPListener(AirplayListener):
 
         self._is_listening = True
 
-        logger.info("Start listening to socket %s: ...", self.socket_addr)
+        logger.info("Start listening to socket %s:%s...", self.socket_addr[0], self.socket_addr[1])
 
         i = 0        # number of chunks which were already received
         chunks = []  # list with all chunks

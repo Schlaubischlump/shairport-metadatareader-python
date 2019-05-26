@@ -1,13 +1,13 @@
 """
 airplay2file example
 ====================================================
-Save the airplay pcm stream to different files with the corresponding metadata. The files volume depends on the
-airplay device volume. The start of the file might be off depending on the speed of the udp server. Sometimes frames
-are skipped leading to parts of the song being silend. Shairport-syncs output is piped to a file, therefore you will
+This examples shows how to automatically save an airplay stream including the current metadata to an m4a file
+when the current track changes. This method is neither intended nor suitable for reliably saving audio files.
+Sometimes frames are lost, sometimes the network is too slow leading to parts of the song being silent. The audio
+files volume depends on the airplay device volume. Shairport-syncs output is piped to a file, therefore you will
 not hear any sound while this program is running.
 
 Do not use this tool for piracy!
-
 """
 import os
 import sys
