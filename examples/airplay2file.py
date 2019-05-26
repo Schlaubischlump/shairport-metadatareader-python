@@ -96,13 +96,13 @@ def on_track_info(lis, info):
     if last_file_info:
         # get the data for the current track
         data = open(pipe_file+".pcm", "rb").read()
-        data = data[offset:]
 
         # remove silence from the start of a track
         if skip_silence:
             while data[offset] == b"\x00":
                 offset += 1
-            data = data[offset:]
+
+        data = data[offset:]
 
         # save the pcm data to a file
         print("Save track: ", last_file_name)
