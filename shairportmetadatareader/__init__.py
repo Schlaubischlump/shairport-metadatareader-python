@@ -45,5 +45,6 @@ def which(program):
 
 if not which("shairport-sync"):
     logger = logging.getLogger("ShairportLogger") # pylint: disable=C0103
+    logger.setLevel(logging.INFO)
     logger.warning("Can not find executable shairport-sync in your PATH. Make sure that shairport-sync is installed "
                    "and configured to support writing the metadata to the pipe or the UDP server.")

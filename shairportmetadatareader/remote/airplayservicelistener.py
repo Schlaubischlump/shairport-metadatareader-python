@@ -9,6 +9,7 @@ AIRPLAY_PREFIX = "iTunes_Ctrl_"
 
 # pylint: disable=C0103
 logger = logging.getLogger("AirplayServiceListenerLogger")
+logger.setLevel(logging.INFO)
 
 
 class AirplayServiceListener(object): # pylint: disable=R0205

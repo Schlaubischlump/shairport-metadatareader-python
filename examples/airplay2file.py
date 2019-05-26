@@ -15,8 +15,13 @@ import wave
 import logging
 import subprocess
 from time import sleep
+import audiotools
+
+
+# pylint: disable=C0103, C0413, W0603, E0601, W0613, W0702
 
 # Pipe all the logs to a file
+# Note: do this before importing shairportmetadatareader
 loggers = ["ShairportLogger", "AirplayListenerLogger"]
 
 fh = logging.FileHandler("airplay2file.log")
@@ -27,7 +32,6 @@ for logger_name in loggers:
     logger.propagate = False
     logger.addHandler(fh)
 
-import audiotools
 from shairportmetadatareader import AirplayUDPListener
 
 
@@ -138,7 +142,7 @@ if __name__ == "__main__":
     try:
         while True:
             sleep(1)
-    except (KeyboardInterrupt, SystemExit):
+    except (KeyboardInterrupt, SystemExit) as e:
         pass
     finally:
         listener.stop_listening()

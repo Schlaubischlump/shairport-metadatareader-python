@@ -9,6 +9,7 @@ from ..util import to_unicode
 
 # pylint: disable=C0103
 logger = logging.getLogger("AirplayRemoteLogger")
+logger.setLevel(logging.INFO)
 
 AIRPLAY_ZEROCONF_SERVICE = "_dacp._tcp.local."
 
