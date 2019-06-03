@@ -37,7 +37,7 @@ from shairportmetadatareader import AirplayUDPListener
 
 def save_wave(data, filename, info=None):
     """
-    Save the current pcm data to a wav file.
+    Save the current pcm data to a m4a file.
     :param data: pcm data
     :param filename: output filename without file extension
     :param info: daap track information as dictionary
@@ -55,11 +55,11 @@ def save_wave(data, filename, info=None):
     # convert the wav file to m4a
     audio_file = audiotools.open(wave_file).convert(filename+".m4a", audiotools.M4AAudio)
 
-    # remove the wave file
+    # remove the wav file
     if os.path.isfile(wave_file):
         os.remove(wave_file)
 
-    # Update the metadata
+    # update the m4a metadata information
     if info:
         metadata = audiotools.MetaData(track_name=info["itemname"], album_name=info["songalbum"],
                                        artist_name=info["songartist"], track_number=1, track_total=1)
@@ -68,7 +68,7 @@ def save_wave(data, filename, info=None):
 
 def on_track_info(lis, info):
     """
-    Track information changed
+    Callback when the track information changed.
     :param lis: listener instance
     :param info: current track information
     """
@@ -83,11 +83,11 @@ def on_track_info(lis, info):
             return ""
         return "{0} - {1} - {2}".format(info["itemname"], info["songartist"], info["songalbum"])
 
-    # get the filename of the current and last file info
+    # get the filename for the current and last file info
     filename = get_file_name(info)
     last_file_name = get_file_name(last_file_info)
 
-    # if the current track changed
+    # if the track changed
     if filename == last_file_name:
         return
 
