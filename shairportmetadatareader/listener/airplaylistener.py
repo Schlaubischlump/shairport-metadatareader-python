@@ -154,7 +154,7 @@ class AirplayListener(EventDispatcher):
         self._artwork = ""
         self._has_remote_data = [False, False]  # [has dacp_id, has active_remote]
 
-        # There is a bug (?) inside shairport where sometimes after pause is pressed another play command is send,
+        # There is a "bug" inside shairport where sometimes after pause is pressed another play command is send,
         # although play was not pressed by the user.
         # Normally a progress message is send before or directly after a play message is send.
         # Check if progress is send before play or if play was send before progress. If so then change the playback
@@ -252,7 +252,7 @@ class AirplayListener(EventDispatcher):
                 self._did_receive_play_msg = False
             elif item.code == "prsm":
                 self._did_receive_play_msg = True
-                # workaround for a bug inside shairport (see __init__ for details)
+                # workaround for a "bug" inside shairport (see __init__ for details)
                 if self._did_receive_progress_msg:
                     self.playback_state = "play"
                     self._did_receive_progress_msg = False
@@ -266,7 +266,7 @@ class AirplayListener(EventDispatcher):
                 self.connected = False
             elif item.code == "prgr":
                 self._did_receive_progress_msg = True
-                # workaround for a bug inside shairport (see __init__ for details)
+                # workaround for a "bug" inside shairport (see __init__ for details)
                 if self._did_receive_play_msg:
                     self.playback_state = "play"
                     self._did_receive_progress_msg = False

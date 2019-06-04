@@ -22,7 +22,7 @@ import audiotools
 
 # Pipe all the logs to a file
 # Note: do this before importing shairportmetadatareader
-loggers = ["ShairportLogger", "AirplayListenerLogger"]
+loggers = ["ShairportLogger", "AirplayListenerLogger", "AirplayServiceListenerLogger"]
 
 fh = logging.FileHandler("airplay2file.log")
 fh.setLevel(logging.DEBUG)

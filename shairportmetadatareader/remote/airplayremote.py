@@ -57,7 +57,7 @@ class AirplayRemote(object): # pylint: disable=R0205
         self.dacp_id = dacp_id
         self.host = host
         self.port = port
-        self.base_url = "{0}:{1}/ctrl-int/1/".format(host, port)
+        self.base_url = "http://{0}:{1}/ctrl-int/1/".format(host, port)
         self.hostname = hostname
 
     @classmethod
@@ -90,7 +90,7 @@ class AirplayRemote(object): # pylint: disable=R0205
 
         # connection established
         if listener and listener.info:
-            host = "http://" + binary_ip_to_string(listener.info.address)
+            host = binary_ip_to_string(listener.info.address)
             return cls(dacp_id, token, host, listener.info.port, hostname=listener.info.server)
         return None
 

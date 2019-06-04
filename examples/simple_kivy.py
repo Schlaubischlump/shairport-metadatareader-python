@@ -5,6 +5,16 @@ This example demonstrates a simple use of the AirplayListener and AirplayRemote.
 It shows a window with the current artwork, song title, artist and album.
 Additionally it displays five buttons to control the playback.
 """
+import logging
+loggers = ["ShairportLogger", "AirplayListenerLogger", "AirplayServiceListenerLogger"]
+
+fh = logging.FileHandler("airplay2file.log")
+fh.setLevel(logging.DEBUG)
+
+for logger_name in loggers:
+    logger = logging.getLogger(logger_name)
+    logger.propagate = False
+    logger.addHandler(fh)
 
 from kivy.app import App
 from kivy.lang import Builder
