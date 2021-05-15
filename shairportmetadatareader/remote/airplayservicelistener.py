@@ -81,3 +81,6 @@ class AirplayServiceListener(object): # pylint: disable=R0205
         Cancel waiting for incoming connection.
         """
         self.is_listening = False
+        
+    def update_service(*args):
+        pass
