@@ -90,7 +90,7 @@ class AirplayRemote(object): # pylint: disable=R0205
 
         # connection established
         if listener and listener.info:
-            host = binary_ip_to_string(listener.info.address)
+            host = binary_ip_to_string(listener.info.address if hasattr(listener.info, "address") else listener.info.addresses[0])
             return cls(dacp_id, token, host, listener.info.port, hostname=listener.info.server)
         return None
 
