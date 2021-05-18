@@ -20,6 +20,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.properties import StringProperty, ObjectProperty # pylint: disable=E0611
 from kivy.uix.boxlayout import BoxLayout
+from kivy.clock import mainthread
 
 from shairportmetadatareader import AirplayUDPListener
 
@@ -31,7 +32,7 @@ Builder.load_string("""
     artist: "artist"
     title: "title"
     album: "album"
-    artwork: "artwork" # for some reason this string must no be empty, otherwise changing the artwork crashes the app
+    artwork: "" # for some reason this string must no be empty, otherwise changing the artwork crashes the app
 
     orientation: 'vertical'
 
@@ -39,7 +40,7 @@ Builder.load_string("""
         size_hint_y: 0.8
         orientation: 'horizontal'
         
-        AsyncImage:
+        Image:
             source: root.artwork
         
         BoxLayout:
@@ -103,6 +104,7 @@ class RootLayout(BoxLayout):
         self.album = info["songalbum"] if "songalbum" in info else "album"
         self.artist = info["songartist"] if "songartist" in info else "artist"
 
+    @mainthread
     def on_artwork(self, listener, artwork):
         """
         Called when the current artwork changes.
