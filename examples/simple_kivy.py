@@ -40,7 +40,7 @@ Builder.load_string("""
         size_hint_y: 0.8
         orientation: 'horizontal'
         
-        Image:
+        AsyncImage:
             source: root.artwork
         
         BoxLayout:
