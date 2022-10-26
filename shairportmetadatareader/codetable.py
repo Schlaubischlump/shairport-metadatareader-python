@@ -341,5 +341,8 @@ SSNC_CODE_DICT = {
     "dapo": ("clientportnumber", "str"),
     "clip": ("clientipaddress", "str"),
     "svip": ("serveripaddress", "str"),
-    "snam": ("sourcename", "str")
+    "snam": ("sourcename", "str"),
+    # Airplay 2 
+    "abeg": ("airplay2begin", None),
+    "aend": ("airplay2end", None)
 }
